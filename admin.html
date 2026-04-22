@@ -146,7 +146,7 @@
                 <i data-lucide="settings" class="w-5 h-5"></i>
                 <span class="font-medium">Settings</span>
             </div>
-            <div onclick="window.location.href='./index.html'" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-website">
+            <div onclick="window.location.href='index.html'" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-website">
                 <i data-lucide="external-link" class="w-5 h-5"></i>
                 <span class="font-medium">Live Website</span>
             </div>
@@ -790,7 +790,7 @@
             if (confirm("Are you sure you want to exit the Command Center?")) {
                 sessionStorage.removeItem('admin_session');
                 // Redirect to website gateway instead of just reloading
-                window.location.href = './index.html';
+                window.location.href = 'index.html';
             }
         }
 
