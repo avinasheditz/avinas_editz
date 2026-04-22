@@ -798,7 +798,10 @@
                 });
                 mapMarkers = [];
 
-                const visitors = JSON.parse(localStorage.getItem('liveVisitors') || '[]');
+                // Use cloud visitors if available, otherwise fallback to local pulse
+                const visitors = (window.cloudVisitors && window.cloudVisitors.length > 0) 
+                    ? window.cloudVisitors 
+                    : JSON.parse(localStorage.getItem('liveVisitors') || '[]');
                 
                 visitors.forEach(v => {
                     if (v.lat && v.lon) {
@@ -1421,6 +1424,35 @@
                 console.error("Chart initialization failed:", e);
             }
         }
+    </script>
+
+    <!-- Firebase Cloud Real-Time Listener -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjPlczuG6mXdnmHJl0uQhLlHqLI-i6xgU",
+            authDomain: "gen-lang-client-0463482479.firebaseapp.com",
+            projectId: "gen-lang-client-0463482479",
+            storageBucket: "gen-lang-client-0463482479.firebasestorage.app",
+            messagingSenderId: "950183595669",
+            appId: "1:950183595669:web:1da8f9838e89292f4d159c"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app, "ai-studio-40b2636a-0430-44a3-8e2e-023eb33afe3d");
+
+        window.cloudVisitors = [];
+
+        // Listen for new visitors globally
+        const q = query(collection(db, "liveVisitors"), orderBy("timestamp", "desc"), limit(100));
+        onSnapshot(q, (snapshot) => {
+            window.cloudVisitors = snapshot.docs.map(doc => doc.data());
+            // Trigger UI update
+            if (typeof updateVisitorMap === 'function') {
+                updateVisitorMap();
+            }
+        });
     </script>
 </body>
 </html>
