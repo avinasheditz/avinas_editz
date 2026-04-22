@@ -844,7 +844,7 @@
                 btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> VERIFIED';
                 if (typeof lucide !== 'undefined') lucide.createIcons();
                 setTimeout(() => {
-                    window.location.href = './admin.html';
+                    window.location.href = 'admin.html';
                 }, 800);
             } else {
                 err.classList.remove('hidden');
@@ -856,9 +856,7 @@
             }
         };
 
-        const openLoginModal = () => {
-            window.location.href = './admin.html';
-        };
+        const openLoginModal = () => openGateway();
         const closeMobileMenu = () => mobileMenu.classList.add('hidden');
 
         // Site Sync Logic
