@@ -861,6 +861,28 @@
                 if (p.standard) document.getElementById('display-price-standard').innerText = symbol + p.standard;
                 if (p.premium) document.getElementById('display-price-premium').innerText = symbol + p.premium;
             }
+
+            // Sync Atmospheric Theme
+            if (config.atmosphere) {
+                const atmospheres = {
+                    cinematic: "radial-gradient(circle at 5% 5%, rgba(0, 242, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 95% 95%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), radial-gradient(circle at 50% 10%, rgba(40, 20, 100, 0.1) 0%, transparent 70%)",
+                    noir: "radial-gradient(circle at 50% 50%, rgba(30, 30, 30, 0.15) 0%, #000 100%)",
+                    neon: "radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.1) 0%, transparent 50%), radial-gradient(circle at 90% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 50%)",
+                    emerald: "radial-gradient(circle at 5% 5%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), radial-gradient(circle at 95% 95%, rgba(4, 120, 87, 0.1) 0%, transparent 50%)",
+                    amber: "radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 60%)",
+                    frost: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 80%)"
+                };
+                const aura = document.querySelector('.atmosphere');
+                if (aura && atmospheres[config.atmosphere]) {
+                    aura.style.background = atmospheres[config.atmosphere];
+                }
+                
+                if (config.atmosphere === 'frost') {
+                    document.body.classList.add('light-theme');
+                } else if (storedTheme !== 'light') {
+                    document.body.classList.remove('light-theme');
+                }
+            }
             
             if (config.accent) {
                 document.documentElement.style.setProperty('--brand-accent', config.accent);
@@ -1028,6 +1050,30 @@
                     stagger: 0.1
                 });
             });
+
+            // Global Visitor Tracking
+            (async () => {
+                try {
+                    const response = await fetch('https://ipapi.co/json/');
+                    const data = await response.json();
+                    
+                    const visitor = {
+                        id: Date.now(),
+                        city: data.city || 'Unknown',
+                        country: data.country_name || 'Unknown',
+                        lat: data.latitude,
+                        lon: data.longitude,
+                        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        timestamp: Date.now()
+                    };
+
+                    const visitors = JSON.parse(localStorage.getItem('liveVisitors') || '[]');
+                    visitors.unshift(visitor);
+                    localStorage.setItem('liveVisitors', JSON.stringify(visitors.slice(0, 50)));
+                } catch (e) {
+                    console.log('Visitor pulse offline.');
+                }
+            })();
         };
 
         // Footer Year
