@@ -394,6 +394,43 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6 font-display">Monetization & Pricing</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-3 tracking-widest">Global Currency Toggle</label>
+                                <div class="flex p-1 bg-gray-100 rounded-2xl">
+                                    <button onclick="setCurrency('INR')" id="cur-inr" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all bg-white shadow-sm text-medical-sidebar">₹ INR (India)</button>
+                                    <button onclick="setCurrency('USD')" id="cur-usd" class="flex-1 py-3 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-gray-600">$ USD (Global)</button>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Basic Tier Price</label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold currency-symbol">₹</span>
+                                        <input type="number" id="price-basic" class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-bold" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Standard Tier Price (Popular)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold currency-symbol">₹</span>
+                                        <input type="number" id="price-standard" class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-bold" placeholder="0.00">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Premium Tier Price</label>
+                                    <div class="relative">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold currency-symbol">₹</span>
+                                        <input type="number" id="price-premium" class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-10 pr-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-bold" placeholder="0.00">
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-gray-400 italic font-medium leading-relaxed">Prices update in real-time on your portfolio. All edits are saved automatically to your profile vault.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Live Preview Column -->
@@ -878,12 +915,41 @@
         });
 
         // --- Admin Profile & Team Logic ---
+        let currentCurrency = 'INR';
+
+        function setCurrency(cur) {
+            currentCurrency = cur;
+            const btnInr = document.getElementById('cur-inr');
+            const btnUsd = document.getElementById('cur-usd');
+            const symbols = document.querySelectorAll('.currency-symbol');
+
+            if (cur === 'INR') {
+                btnInr.className = "flex-1 py-3 rounded-xl text-xs font-bold transition-all bg-white shadow-sm text-medical-sidebar";
+                btnUsd.className = "flex-1 py-3 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-gray-600";
+                symbols.forEach(s => s.innerText = '₹');
+            } else {
+                btnUsd.className = "flex-1 py-3 rounded-xl text-xs font-bold transition-all bg-white shadow-sm text-medical-sidebar";
+                btnInr.className = "flex-1 py-3 rounded-xl text-xs font-bold transition-all text-gray-400 hover:text-gray-600";
+                symbols.forEach(s => s.innerText = '$');
+            }
+        }
+
         function initAdminUsers() {
             let admins = JSON.parse(localStorage.getItem('adminUsers'));
             if (!admins) {
                 admins = [{ username: 'avinashpandit9958', password: 'Avinash9958', name: 'Avinash Pandit', role: 'super-admin' }];
                 localStorage.setItem('adminUsers', JSON.stringify(admins));
             }
+
+            // Also init pricing from siteConfig
+            const config = JSON.parse(localStorage.getItem('siteConfig'));
+            if (config && config.pricing) {
+                setCurrency(config.pricing.currency || 'INR');
+                document.getElementById('price-basic').value = config.pricing.basic || '';
+                document.getElementById('price-standard').value = config.pricing.standard || '';
+                document.getElementById('price-premium').value = config.pricing.premium || '';
+            }
+
             return admins;
         }
 
@@ -1015,13 +1081,19 @@
                 name: siteName || "Avinash Editz",
                 accent: currentAccent,
                 bg: currentTheme === 'dark' ? '#050505' : '#f0f4f7',
-                theme: currentTheme
+                theme: currentTheme,
+                pricing: {
+                    currency: currentCurrency,
+                    basic: document.getElementById('price-basic').value,
+                    standard: document.getElementById('price-standard').value,
+                    premium: document.getElementById('price-premium').value
+                }
             };
             localStorage.setItem('siteConfig', JSON.stringify(config));
             localStorage.setItem('siteFont', selectedFont);
             localStorage.setItem('siteTheme', currentTheme);
             
-            alert("✨ Appearance deployed to live site!");
+            alert("✨ Appearance & Pricing deployed to live site!");
         }
 
         // --- Real-time Analytics Chart ---
