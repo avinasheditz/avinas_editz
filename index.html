@@ -1054,19 +1054,29 @@
             // Global Visitor Tracking
             (async () => {
                 try {
-                    const response = await fetch('https://ipapi.co/json/');
-                    const data = await response.json();
-                    
-                    const visitor = {
+                    let visitor = {
                         id: Date.now(),
-                        city: data.city || 'Unknown',
-                        country: data.country_name || 'Unknown',
-                        lat: data.latitude,
-                        lon: data.longitude,
+                        city: 'Guest City',
+                        country: 'Unknown',
+                        lat: 20 + (Math.random() * 10 - 5),
+                        lon: 77 + (Math.random() * 10 - 5), // Default to somewhere in India to be safe
                         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                         timestamp: Date.now()
                     };
 
+                    try {
+                        const response = await fetch('https://ipapi.co/json/');
+                        if (response.ok) {
+                            const data = await response.json();
+                            visitor.city = data.city || visitor.city;
+                            visitor.country = data.country_name || visitor.country;
+                            visitor.lat = data.latitude || visitor.lat;
+                            visitor.lon = data.longitude || visitor.lon;
+                        }
+                    } catch (netErr) {
+                        console.log('Location API blocked, using fallback.');
+                    }
+                    
                     const visitors = JSON.parse(localStorage.getItem('liveVisitors') || '[]');
                     visitors.unshift(visitor);
                     localStorage.setItem('liveVisitors', JSON.stringify(visitors.slice(0, 50)));
