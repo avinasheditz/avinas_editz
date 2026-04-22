@@ -519,17 +519,9 @@
                             <h3 class="font-bold text-gray-800 text-xl font-display uppercase tracking-widest">Real-Time Visitor Pulse</h3>
                             <p class="text-xs text-gray-400 font-medium">Live geographic intelligence from your global audience.</p>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button onclick="simulateVisit()" class="px-3 py-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-xl text-[10px] font-bold uppercase transition-all flex items-center gap-1.5" title="Test with a sample visit">
-                                <i data-lucide="crosshair" class="w-3 h-3"></i> Test Pulse
-                            </button>
-                            <button onclick="initVisitorMap()" class="px-3 py-2 bg-medical-sidebar/10 text-medical-sidebar hover:bg-medical-sidebar hover:text-white rounded-xl text-[10px] font-bold uppercase transition-all flex items-center gap-1.5" title="Refresh map container">
-                                <i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
-                            </button>
-                            <div class="flex items-center gap-2 px-3 py-1 bg-medical-sidebar/10 rounded-full">
-                                <span class="w-2 h-2 rounded-full bg-medical-sidebar animate-ping"></span>
-                                <span class="text-[10px] font-bold text-medical-sidebar uppercase tracking-tighter">Live Telemetry</span>
-                            </div>
+                        <div class="flex items-center gap-2 px-3 py-1 bg-medical-sidebar/10 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-medical-sidebar animate-ping"></span>
+                            <span class="text-[10px] font-bold text-medical-sidebar uppercase tracking-tighter">Live Telemetry</span>
                         </div>
                     </div>
                     <div id="visitor-map" class="h-[450px] rounded-2xl border border-gray-100 overflow-hidden shadow-inner bg-gray-50"></div>
@@ -828,29 +820,6 @@
             } catch (e) {
                 console.error("Map update failed:", e);
             }
-        }
-
-        function simulateVisit() {
-            const sampleCities = [
-                { city: 'Miami', country: 'US', lat: 25.7617, lon: -80.1918 },
-                { city: 'Tokyo', country: 'Japan', lat: 35.6762, lon: 139.6503 },
-                { city: 'London', country: 'UK', lat: 51.5074, lon: -0.1278 },
-                { city: 'Mumbai', country: 'India', lat: 19.0760, lon: 72.8777 }
-            ];
-            const rand = sampleCities[Math.floor(Math.random() * sampleCities.length)];
-            const visitor = {
-                id: Date.now(),
-                city: rand.city,
-                country: rand.country,
-                lat: rand.lat,
-                lon: rand.lon,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                timestamp: Date.now()
-            };
-            const visitors = JSON.parse(localStorage.getItem('liveVisitors') || '[]');
-            visitors.unshift(visitor);
-            localStorage.setItem('liveVisitors', JSON.stringify(visitors.slice(0, 50)));
-            updateVisitorMap();
         }
 
         // --- Portfolio CMS Logic ---
