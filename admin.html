@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avinash Editz | Admin Command Center</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        medical: {
+                            sidebar: '#1d90a7',
+                            sidebarHover: '#166d7e',
+                            bg: '#f0f4f7',
+                            accent: '#3ab6c5',
+                            darkTeal: '#0f6674'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root { --admin-font-size: 14px; }
+        body { background-color: #f0f4f7; color: #333; font-size: var(--admin-font-size); transition: all 0.3s ease; }
+        body.dark { background-color: #0a0a0a; color: #f0f4f7; }
+        
+        .sidebar-item { transition: all 0.2s ease; cursor: pointer; }
+        .sidebar-item.active { background: #1d90a7; color: #fff; border-radius: 12px; }
+        
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: background 0.3s ease, color 0.3s ease; }
+        body.dark .card { background: #1a1a1a; border-color: #333; color: #fff; }
+        body.dark .text-gray-800 { color: #f0f4f7; }
+        body.dark .text-gray-700 { color: #e5e7eb; }
+        body.dark .text-gray-500 { color: #9ca3af; }
+        body.dark .text-gray-400 { color: #6b7280; }
+        body.dark .bg-gray-50 { background-color: #262626; }
+        body.dark .bg-white { background-color: #1a1a1a; }
+        body.dark header { background-color: #111; border-color: #262626; }
+        body.dark main { background-color: #0a0a0a; }
+        body.dark .border-gray-100, body.dark .border-gray-200 { border-color: #333; }
+        body.dark input, body.dark select { background-color: #262626; color: white; border-color: #444; }
+        body.dark .sidebar-item:not(.active) { color: #9ca3af; }
+        
+        /* Calendar Specifics */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; }
+        .day-low { background-color: #e0f2f1; color: #00796b; }
+        .day-mod { background-color: #00acc1; color: #fff; }
+        .day-high { background-color: #006064; color: #fff; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .section-scroll { max-height: 250px; overflow-y: auto; }
+        .view { display: none; }
+        .view-active { display: block; }
+        .modal-backdrop { background: rgba(15, 102, 116, 0.4); backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body class="font-sans flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-medical-sidebar text-white flex flex-col p-6 fixed h-full z-50">
+        <div class="flex items-center gap-3 mb-10">
+            <div class="bg-white p-2 rounded-lg text-medical-sidebar">
+                <i data-lucide="edit-3" class="w-6 h-6"></i>
+            </div>
+            <span class="font-bold text-xl tracking-tight">Avinash Editz</span>
+        </div>
+
+        <nav class="space-y-4 flex-1">
+            <div onclick="switchView('dashboard')" class="sidebar-item active flex items-center gap-4 px-4 py-3" id="nav-dashboard">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                <span class="font-medium">Dashboard</span>
+            </div>
+            <div onclick="switchView('portfolio')" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-portfolio">
+                <i data-lucide="video" class="w-5 h-5"></i>
+                <span class="font-medium">Portfolio</span>
+            </div>
+            <div onclick="switchView('appearance')" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-appearance">
+                <i data-lucide="palette" class="w-5 h-5"></i>
+                <span class="font-medium">Appearance</span>
+            </div>
+            <div onclick="switchView('analytics')" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-analytics">
+                <i data-lucide="line-chart" class="w-5 h-5"></i>
+                <span class="font-medium">Analytics</span>
+            </div>
+            <div onclick="switchView('settings')" class="sidebar-item flex items-center gap-4 px-4 py-3 opacity-70 hover:opacity-100" id="nav-settings">
+                <i data-lucide="settings" class="w-5 h-5"></i>
+                <span class="font-medium">Settings</span>
+            </div>
+        </nav>
+
+        <div onclick="window.location.href='index.html'" class="mt-auto opacity-70 hover:opacity-100 flex items-center gap-4 px-4 py-3 cursor-pointer group transition-all">
+            <i data-lucide="log-out" class="w-5 h-5 transition-transform group-hover:-translate-x-1"></i>
+            <span class="font-medium">log out</span>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="flex-1 ml-64 bg-medical-bg">
+        <!-- Top Bar -->
+        <header class="bg-white px-8 py-4 flex items-center justify-between border-b border-gray-100 sticky top-0 z-40">
+            <div class="flex items-center gap-4">
+                <button class="p-2 hover:bg-gray-100 rounded-lg">
+                    <i data-lucide="menu" class="w-6 h-6 text-gray-500"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 max-w-xl mx-8">
+                <div class="relative">
+                    <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                    <input type="text" placeholder="Search..." class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 pl-12 pr-4 text-sm outline-none focus:ring-2 focus:ring-medical-accent/20 transition-all">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <i data-lucide="help-circle" class="w-5 h-5 text-gray-400 cursor-pointer hover:text-medical-sidebar"></i>
+                <div class="relative group">
+                    <div class="cursor-pointer hover:text-medical-sidebar relative p-1" id="notification-bell">
+                        <i data-lucide="bell" class="w-5 h-5 text-gray-400"></i>
+                        <span id="notif-badge" class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white hidden"></span>
+                    </div>
+                    
+                    <!-- Notification Dropdown -->
+                    <div id="notif-dropdown" class="absolute right-0 mt-3 w-80 card shadow-2xl border border-gray-100 hidden p-0 overflow-hidden z-50">
+                        <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+                            <span class="font-bold text-xs uppercase tracking-widest text-gray-400">Notifications</span>
+                            <button onclick="clearNotifications()" class="text-[10px] font-bold text-medical-sidebar hover:underline">Clear All</button>
+                        </div>
+                        <div id="notif-list" class="max-h-[350px] overflow-y-auto divide-y divide-gray-50">
+                            <!-- Dynamic Content -->
+                            <div class="p-8 text-center text-gray-400">
+                                <p class="text-sm">No new notifications</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="openAdminProfileModal()" class="w-10 h-10 rounded-full bg-gray-200 border-2 border-white overflow-hidden shadow-sm cursor-pointer hover:border-medical-sidebar transition-all active:scale-90">
+                    <img src="https://picsum.photos/seed/doctor/100/100" alt="Avatar" class="w-full h-full object-cover">
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div id="view-dashboard" class="view view-active p-8 space-y-8">
+            
+            <!-- Row 1: Insights -->
+            <div class="flex flex-col lg:flex-row gap-6">
+                <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Patient Overview -->
+                    <div class="card p-6 border-l-4 border-medical-sidebar">
+                        <h3 class="text-gray-500 text-sm font-bold uppercase tracking-wider mb-2">Project Statistics</h3>
+                        <p class="text-gray-400 text-xs mb-4">Total Edits Delivered:</p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-4xl font-bold">145</span>
+                            <div class="flex items-center gap-1 text-green-500 text-sm font-bold bg-green-50 rounded-full px-2 py-0.5">
+                                <i data-lucide="trending-up" class="w-3 h-3"></i> 12%
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Max Patient Arrival -->
+                    <div class="card p-6 bg-medical-darkTeal text-white text-center flex flex-col justify-center">
+                        <h3 class="text-xs uppercase font-bold tracking-widest opacity-70 mb-2">Peak Daily Throughput</h3>
+                        <div class="text-5xl font-bold mb-2">28</div>
+                        <p class="text-[10px] opacity-70 uppercase font-bold">Max Projects Finalized in 24h</p>
+                    </div>
+
+                    <!-- Patient Flow Charts Part 1 -->
+                    <div class="card p-6 col-span-1 md:col-span-2">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="font-bold text-gray-700">Production Velocity</h3>
+                            <i data-lucide="more-horizontal" class="text-gray-400 cursor-pointer"></i>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="h-48">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                            <div class="h-48">
+                                <canvas id="lineChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-tighter">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar View -->
+                <div class="lg:w-80 card p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-gray-700">Creative Calendar</h3>
+                        <i data-lucide="more-horizontal" class="text-gray-400"></i>
+                    </div>
+                    
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-3 text-[10px] font-bold">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-100 border border-emerald-500"></span> Available</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> Busy</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-900"></span> Deadline</span>
+                        </div>
+                        
+                        <div class="calendar-grid mb-4">
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Su</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Mo</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Tu</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">We</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Th</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Fr</div>
+                            <div class="text-center text-xs font-bold text-gray-400 py-2">Sa</div>
+                            
+                            <!-- Empty days for alignment -->
+                            <div></div><div></div><div></div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">1</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">2</div>
+                            <div class="calendar-day day-mod">3</div>
+                            <div class="calendar-day day-mod">4</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700 font-bold border-2 border-cyan-200">5</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">6</div>
+                            <div class="calendar-day day-mod">7</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">8</div>
+                            <div class="calendar-day day-mod">9</div>
+                            <div class="calendar-day day-mod text-[8px] flex-col">10 <span class="opacity-50">Draft</span></div>
+                            <div class="calendar-day day-mod">11</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">12</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">13</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">14</div>
+                            <div class="calendar-day day-mod">15</div>
+                            <div class="calendar-day day-high relative overflow-hidden">16 <span class="absolute -bottom-1 text-[6px] font-bold uppercase">Final</span></div>
+                            <div class="calendar-day day-high">17</div>
+                            <div class="calendar-day day-high">18</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">19</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">20</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">21</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">22</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">23</div>
+                            <div class="calendar-day day-mod">24</div>
+                            <div class="calendar-day day-mod">25</div>
+                            <div class="calendar-day day-high">26</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">27</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">28</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">29</div>
+                            <div class="calendar-day bg-cyan-50 text-cyan-700">30</div>
+                            <div class="calendar-day day-mod">31</div>
+                        </div>
+
+                        <!-- Legend Details -->
+                        <div class="grid grid-cols-3 gap-2 text-[8px] font-bold uppercase text-gray-400">
+                            <div><span class="day-low px-1.5 py-0.5 rounded mr-1"></span> Free Slots</div>
+                            <div><span class="day-mod px-1.5 py-0.5 rounded mr-1"></span> Project Drafts</div>
+                            <div><span class="day-high px-1.5 py-0.5 rounded mr-1"></span> Urgent Delivery</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 3: Working Flow Chart (Replaced with Live Activity) -->
+            <div class="card p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-bold text-gray-700">Recent Engagement</h3>
+                    <span class="flex items-center gap-2 text-[10px] font-bold text-green-500 uppercase animate-pulse">
+                         <span class="w-2 h-2 rounded-full bg-green-500"></span> Live Processing
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-blue-50 border border-blue-100">
+                        <p class="text-[10px] font-bold text-blue-400 uppercase mb-1">Last Inquiry</p>
+                        <p class="text-sm font-bold text-blue-900 leading-tight">Gaming Edit - 2 mins ago</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-purple-50 border border-purple-100">
+                        <p class="text-[10px] font-bold text-purple-400 uppercase mb-1">Active Preview</p>
+                        <p class="text-sm font-bold text-purple-900 leading-tight">Cinematic Travel Reel</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-orange-50 border border-orange-100">
+                        <p class="text-[10px] font-bold text-orange-400 uppercase mb-1">Queue Depth</p>
+                        <p class="text-sm font-bold text-orange-900 leading-tight">4 High Priority Tags</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-medical-sidebar/5 border border-medical-sidebar/20">
+                        <p class="text-[10px] font-bold text-medical-sidebar uppercase mb-1">Server Status</p>
+                        <p class="text-sm font-bold text-medical-sidebar leading-tight">Ultra Fast (38ms)</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Appearance Customizer View -->
+        <div id="view-appearance" class="view p-8 space-y-8">
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Controls Column -->
+                <div class="flex-1 space-y-6">
+                    <div class="card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Identity & Typography</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Site Identity (Name)</label>
+                                <input type="text" id="site-name-input" placeholder="Avinash Editz" oninput="updateLivePreview()" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Typography Style</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button onclick="setFont('Inter')" class="p-4 rounded-xl border border-gray-100 hover:border-medical-sidebar/50 transition-all text-left group">
+                                        <p class="text-lg font-bold">Inter</p>
+                                        <p class="text-xs text-gray-400">Professional/Modern</p>
+                                    </button>
+                                    <button onclick="setFont('Space Grotesk')" class="p-4 rounded-xl border border-gray-100 hover:border-medical-sidebar/50 transition-all text-left">
+                                        <p class="text-lg font-display font-bold">Space Grotesk</p>
+                                        <p class="text-xs text-gray-400">Tech/Futuristic</p>
+                                    </button>
+                                    <button onclick="setFont('Playfair Display')" class="p-4 rounded-xl border border-gray-100 hover:border-medical-sidebar/50 transition-all text-left">
+                                        <p class="text-lg font-serif font-black italic">Playfair</p>
+                                        <p class="text-xs text-gray-400">Elegant/Serif</p>
+                                    </button>
+                                    <button onclick="setFont('JetBrains Mono')" class="p-4 rounded-xl border border-gray-100 hover:border-medical-sidebar/50 transition-all text-left">
+                                        <p class="text-lg font-mono font-bold uppercase">Mono</p>
+                                        <p class="text-xs text-gray-400">Minimal/Coding</p>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-3">Live Site Theme Mode (Swipe)</label>
+                                <div class="flex items-center gap-4">
+                                    <i data-lucide="moon" class="w-4 h-4 text-gray-400"></i>
+                                    <input type="range" min="0" max="1" step="1" id="site-theme-swipe" oninput="handleSiteThemeSwipe(this.value)" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-medical-sidebar">
+                                    <i data-lucide="sun" class="w-4 h-4 text-gray-400"></i>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-2 italic font-medium">Swipe to toggle the live website between Dark and Light.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Admin Panel Interface</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-3">Theme Swipe Toggle</label>
+                                <div class="flex items-center gap-4">
+                                    <i data-lucide="moon" class="w-4 h-4 text-gray-400"></i>
+                                    <input type="range" min="0" max="1" step="1" id="admin-theme-swipe" oninput="handleAdminThemeSwipe(this.value)" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-medical-sidebar">
+                                    <i data-lucide="sun" class="w-4 h-4 text-gray-400"></i>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-2 italic font-medium">Swipe the slider to switch the admin panel between Dark and Light.</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-3">Interface Font Size</label>
+                                <div class="flex items-center gap-4">
+                                     <span class="text-xs font-bold">A</span>
+                                     <input type="range" min="12" max="20" value="14" id="admin-font-slider" oninput="updateAdminFontSize(this.value)" class="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-medical-sidebar">
+                                     <span class="text-xl font-bold">A</span>
+                                </div>
+                                <p id="font-size-label" class="text-[10px] text-medical-sidebar mt-1 font-bold">14px</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card p-8">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Color Spectrum Theme</h3>
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-3">Accent Color Sweep</label>
+                                <div class="relative h-12 w-full rounded-2xl overflow-hidden cursor-crosshair border-2 border-white shadow-inner" id="color-spectrometer">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-400 via-green-500 via-blue-500 via-purple-500 to-pink-500"></div>
+                                </div>
+                                <p class="text-[10px] text-gray-400 mt-2 italic font-medium">Swipe over the spectrum to dynamically update the site's accent.</p>
+                            </div>
+                            
+                            <div class="flex items-center justify-between p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                                <div>
+                                    <p class="text-sm font-bold">Active Theme</p>
+                                    <p id="current-hex" class="text-[10px] font-mono text-medical-sidebar">#F0F2F5</p>
+                                </div>
+                                <div id="accent-preview" class="w-10 h-10 rounded-full border-4 border-white shadow-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Preview Column -->
+                <div class="lg:w-[400px] space-y-6">
+                    <div class="card p-6 sticky top-24 border-2 border-medical-sidebar/10">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-sm font-bold uppercase tracking-widest text-gray-400">Live Preview</h3>
+                            <div class="flex gap-1">
+                                <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                                <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+                                <span class="w-2 h-2 rounded-full bg-green-400"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="aspect-video w-full rounded-2xl overflow-hidden mb-6 border border-gray-100 shadow-xl bg-black relative" id="preview-frame">
+                             <div class="absolute inset-0 p-8 flex flex-col justify-center gap-4">
+                                <span id="preview-label" class="text-[8px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80">Indian Video Editor</span>
+                                <h1 id="preview-name" class="text-3xl font-display font-bold leading-[0.9]">AVINASH <span class="text-cyan-400">EDITZ</span></h1>
+                                <div class="h-1 w-12 bg-cyan-400 rounded-full" id="preview-bar"></div>
+                                <div class="flex gap-2">
+                                    <div class="w-20 h-6 bg-cyan-400 rounded-full" id="preview-btn"></div>
+                                    <div class="w-20 h-6 bg-white/10 rounded-full border border-white/20"></div>
+                                </div>
+                             </div>
+                        </div>
+
+                        <button onclick="saveAppearanceSettings()" class="w-full bg-medical-sidebar text-white py-4 rounded-2xl font-bold shadow-xl shadow-medical-sidebar/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <i data-lucide="cloud-upload" class="w-5 h-5"></i> DEPLOY CHANGES
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Analytics View -->
+        <div id="view-analytics" class="view p-8 space-y-8">
+            <div class="flex justify-between items-end mb-4">
+                <div>
+                     <h2 class="text-3xl font-display font-bold text-gray-800 tracking-tighter">LIVE COMMAND</h2>
+                     <p class="text-gray-500 font-medium">Real-time engagement telemetry from your portfolio.</p>
+                </div>
+                <div class="px-4 py-2 bg-green-50 text-green-600 rounded-xl border border-green-100 text-xs font-bold animate-pulse">
+                    RECEIVING DATA...
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Detailed Chart Analytics -->
+                <div class="md:col-span-2 card p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="font-bold text-gray-700">Visitor Velocity (Real-Time)</h3>
+                        <div class="flex gap-4 text-[10px] font-bold">
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-medical-sidebar"></span> Direct</span>
+                            <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-medical-accent"></span> Social</span>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                         <canvas id="realtimeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Side Widget Column -->
+                <div class="space-y-6">
+                    <div class="card p-6 bg-gradient-to-br from-indigo-900 to-purple-900 text-white shadow-2xl relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+                        <h4 class="text-xs font-bold opacity-70 uppercase mb-4">Hot Acquisition</h4>
+                        <div class="text-4xl font-display font-bold mb-1">YouTube</div>
+                        <p class="text-xs opacity-70 tracking-wide">64% of total traffic</p>
+                        <div class="mt-6 flex gap-1">
+                            <div class="h-1 flex-1 bg-white/20 rounded-full overflow-hidden"><div class="h-full bg-white w-[64%]"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="card p-6">
+                         <h4 class="text-[10px] font-bold text-gray-400 uppercase mb-4 tracking-widest">Active Geographies</h4>
+                         <div class="space-y-4">
+                             <div class="flex items-center justify-between">
+                                 <span class="text-xs font-bold">Mumbai, India</span>
+                                 <span class="text-xs font-mono text-medical-sidebar">42%</span>
+                             </div>
+                             <div class="flex items-center justify-between">
+                                 <span class="text-xs font-bold">Delhi, India</span>
+                                 <span class="text-xs font-mono text-medical-sidebar">18%</span>
+                             </div>
+                             <div class="flex items-center justify-between">
+                                 <span class="text-xs font-bold">New York, US</span>
+                                 <span class="text-xs font-mono text-medical-sidebar">12%</span>
+                             </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-settings" class="view p-8">
+            <div class="card p-8">
+                <h2 class="text-2xl font-bold mb-6">General Settings</h2>
+                <p class="text-gray-500">Account and system configuration tools.</p>
+            </div>
+        </div>
+
+        <!-- Portfolio Management View -->
+        <div id="view-portfolio" class="view p-8 space-y-8">
+            <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Portfolio Manager</h2>
+                    <p class="text-sm text-gray-500">Upload and manage videos appearing on your main website.</p>
+                </div>
+                <button onclick="openVideoModal()" class="bg-medical-sidebar text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-medical-sidebarHover transition-all shadow-lg hover:shadow-medical-sidebar/20">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> UPLOAD VIDEO
+                </button>
+            </div>
+
+            <!-- Video Grid -->
+            <div id="admin-video-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Videos will be injected here -->
+            </div>
+        </div>
+
+        <!-- Add Video Modal -->
+        <div id="video-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 modal-backdrop" onclick="closeVideoModal()"></div>
+            <div class="bg-white rounded-3xl w-full max-w-md relative z-10 shadow-2xl p-8 transform transition-all">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-gray-800">Project Details</h3>
+                    <button onclick="closeVideoModal()" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <i data-lucide="x" class="w-5 h-5 text-gray-400"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Project Title</label>
+                        <input type="text" id="video-title" placeholder="e.g. Cinematic Travel Reel" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Category</label>
+                        <select id="video-category" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-medium">
+                            <option value="cinematic">Cinematic</option>
+                            <option value="reels">Reels</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="advertisement">Advertisement</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Thumbnail / Image URL</label>
+                        <input type="text" id="video-url" placeholder="https://..." class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-medical-sidebar/20 transition-all font-medium">
+                    </div>
+                    
+                    <button onclick="addVideo()" class="w-full bg-medical-sidebar text-white py-4 rounded-2xl font-bold mt-4 shadow-lg shadow-medical-sidebar/20 hover:scale-[1.02] active:scale-[0.98] transition-all">
+                        PUBLIC DEPLOYMENT
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Admin Profile Modal -->
+        <div id="admin-profile-modal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+            <div class="absolute inset-0 modal-backdrop" onclick="closeAdminProfileModal()"></div>
+            <div class="bg-white rounded-3xl w-full max-w-lg relative z-10 shadow-2xl overflow-hidden transition-all">
+                <div class="bg-medical-sidebar p-6 text-white flex justify-between items-center">
+                    <div>
+                        <h3 class="text-xl font-bold">Admin Management</h3>
+                        <p class="text-xs opacity-80">Security & Team Access Control</p>
+                    </div>
+                    <button onclick="closeAdminProfileModal()" class="p-2 hover:bg-white/10 rounded-full">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex gap-4 border-b border-gray-100 mb-6">
+                        <button onclick="switchProfileTab('my')" id="tab-my" class="pb-2 px-1 text-sm font-bold border-b-2 border-medical-sidebar text-medical-sidebar transition-all">My Credentials</button>
+                        <button onclick="switchProfileTab('team')" id="tab-team" class="pb-2 px-1 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-all">Admin Team</button>
+                    </div>
+
+                    <!-- My Credentials -->
+                    <div id="profile-pane-my" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold uppercase text-gray-400">Current Login</label>
+                                <input type="text" id="current-username" disabled class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm font-medium opacity-60">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold uppercase text-gray-400">Security Rank</label>
+                                <div class="px-4 py-2.5 bg-blue-50 text-blue-600 rounded-xl text-xs font-bold border border-blue-100">Super Admin</div>
+                            </div>
+                        </div>
+                        <hr class="border-gray-50 my-4" />
+                        <form onsubmit="updateMyCredentials(event)" class="space-y-4">
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold uppercase text-gray-400">New Username</label>
+                                <input type="text" id="new-username" required class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-medical-sidebar/20" placeholder="Change username...">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-bold uppercase text-gray-400">New Pass-Key</label>
+                                <input type="password" id="new-password" required class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-medical-sidebar/20" placeholder="New strong password">
+                            </div>
+                            <button type="submit" class="w-full bg-medical-sidebar text-white py-3 rounded-xl font-bold hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-medical-sidebar/20">
+                                Update My Profile
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Team Management -->
+                    <div id="profile-pane-team" class="hidden space-y-6">
+                        <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl">
+                            <span class="text-xs font-bold text-gray-600">Active Administrators</span>
+                            <span id="admin-count" class="bg-medical-sidebar text-white text-[10px] px-2 py-0.5 rounded-full font-bold">1</span>
+                        </div>
+                        
+                        <div id="admin-list" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                            <!-- Team list injected here -->
+                        </div>
+
+                        <div class="bg-gray-50/50 p-6 rounded-3xl border border-gray-100 border-dashed">
+                            <h4 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Add New Admin</h4>
+                            <form onsubmit="addNewAdmin(event)" class="space-y-3">
+                                <input type="text" id="add-admin-user" required placeholder="Full Name or Username" class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-medical-sidebar/20">
+                                <input type="password" id="add-admin-pass" required placeholder="Initial Pass-Key" class="w-full bg-white border border-gray-100 rounded-xl px-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-medical-sidebar/20">
+                                <button type="submit" class="w-full bg-gray-800 text-white py-2.5 rounded-xl font-bold text-sm hover:bg-black transition-all">
+                                    Invite to Team
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // --- View Switching ---
+        function switchView(viewId) {
+            // Update Nav UI
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('opacity-70', 'hover:opacity-100');
+            });
+            const activeNav = document.getElementById(`nav-${viewId}`);
+            if(activeNav) {
+                activeNav.classList.add('active');
+                activeNav.classList.remove('opacity-70', 'hover:opacity-100');
+            }
+
+            // Update View Display
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('view-active');
+                view.classList.add('hidden');
+            });
+            const activeView = document.getElementById(`view-${viewId}`);
+            if(activeView) {
+                activeView.classList.add('view-active');
+                activeView.classList.remove('hidden');
+            }
+        }
+
+        // --- Portfolio CMS Logic ---
+        let portfolioVideos = JSON.parse(localStorage.getItem('portfolioVideos')) || [
+            { id: 1, title: "Travel Edit", category: "cinematic", url: "https://picsum.photos/seed/travel/800/600" },
+            { id: 2, title: "Viral Edit", category: "reels", url: "https://picsum.photos/seed/reel/800/600" },
+            { id: 3, title: "Pro Montage", category: "gaming", url: "https://picsum.photos/seed/gaming/800/600" }
+        ];
+
+        function renderVideos() {
+            const container = document.getElementById('admin-video-grid');
+            if(!container) return;
+            
+            container.innerHTML = portfolioVideos.map(video => `
+                <div class="card p-4 group relative overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
+                    <div class="aspect-video rounded-xl overflow-hidden mb-4 relative">
+                        <img src="${video.url}" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                             <button onclick="deleteVideo(${video.id})" class="p-3 bg-red-500 text-white rounded-full hover:scale-110 transition-transform">
+                                <i data-lucide="trash-2" class="w-5 h-5"></i>
+                             </button>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-gray-800 line-clamp-1">${video.title}</h4>
+                        <span class="text-[10px] font-bold uppercase text-medical-sidebar bg-medical-sidebar/10 px-2 py-0.5 rounded-full">${video.category}</span>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function openVideoModal() {
+            const modal = document.getElementById('video-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Little pop animation
+            setTimeout(() => {
+                modal.querySelector('div:last-child').style.transform = "scale(1)";
+            }, 10);
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('video-modal');
+            modal.querySelector('div:last-child').style.transform = "scale(0.95)";
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 100);
+        }
+
+        function addVideo() {
+            const title = document.getElementById('video-title').value;
+            const category = document.getElementById('video-category').value;
+            const url = document.getElementById('video-url').value;
+            
+            if(!title || !url) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            const newVideo = {
+                id: Date.now(),
+                title,
+                category,
+                url
+            };
+
+            portfolioVideos.unshift(newVideo);
+            localStorage.setItem('portfolioVideos', JSON.stringify(portfolioVideos));
+            renderVideos();
+            closeVideoModal();
+            
+            // Clear inputs
+            document.getElementById('video-title').value = '';
+            document.getElementById('video-url').value = '';
+        }
+
+        function deleteVideo(id) {
+            if(!confirm("Are you sure you want to remove this project?")) return;
+            portfolioVideos = portfolioVideos.filter(v => v.id !== id);
+            localStorage.setItem('portfolioVideos', JSON.stringify(portfolioVideos));
+            renderVideos();
+        }
+
+        // --- Appearance CMS Logic ---
+        let selectedFont = localStorage.getItem('siteFont') || 'Inter';
+        let currentAccent = '#1d90a7';
+        let currentTheme = localStorage.getItem('siteTheme') || 'dark';
+
+        // Admin Panel Settings
+        function applyAdminTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark');
+                document.getElementById('admin-theme-swipe').value = 0;
+            } else {
+                document.body.classList.remove('dark');
+                document.getElementById('admin-theme-swipe').value = 1;
+            }
+            localStorage.setItem('adminTheme', isDark ? 'dark' : 'light');
+        }
+
+        function handleAdminThemeSwipe(val) {
+            applyAdminTheme(val == 0);
+        }
+
+        function handleSiteThemeSwipe(val) {
+            setTheme(val == 0 ? 'dark' : 'light');
+            document.getElementById('site-theme-swipe').value = val;
+        }
+
+        function updateAdminFontSize(size) {
+            document.documentElement.style.setProperty('--admin-font-size', size + 'px');
+            document.getElementById('font-size-label').innerText = size + 'px';
+            localStorage.setItem('adminFontSize', size);
+        }
+
+        // Initialize Admin Settings
+        const savedAdminTheme = localStorage.getItem('adminTheme') || 'light';
+        const savedAdminFontSize = localStorage.getItem('adminFontSize') || '14';
+        const savedSiteTheme = localStorage.getItem('siteTheme') || 'dark';
+        
+        applyAdminTheme(savedAdminTheme === 'dark');
+        updateAdminFontSize(savedAdminFontSize);
+        document.getElementById('admin-font-slider').value = savedAdminFontSize;
+        document.getElementById('site-theme-swipe').value = (savedSiteTheme === 'dark' ? 0 : 1);
+
+        function setTheme(theme) {
+            currentTheme = theme;
+            // No alert for swipe to keep it fluid, just update state
+            updateLivePreview();
+        }
+
+        function setFont(font) {
+            selectedFont = font;
+            updateLivePreview();
+        }
+
+        function updateLivePreview() {
+            const siteNameInput = document.getElementById('site-name-input');
+            const previewName = document.getElementById('preview-name');
+            const previewLabel = document.getElementById('preview-label');
+            const previewBar = document.getElementById('preview-bar');
+            const previewBtn = document.getElementById('preview-btn');
+
+            if (siteNameInput.value) {
+                const parts = siteNameInput.value.split(' ');
+                if (parts.length > 1) {
+                    previewName.innerHTML = `${parts[0]} <span class="text-cyan-400" style="color: ${currentAccent}">${parts.slice(1).join(' ')}</span>`;
+                } else {
+                    previewName.innerText = siteNameInput.value;
+                }
+            }
+
+            // Apply selected font to preview
+            const frame = document.getElementById('preview-frame');
+            frame.style.fontFamily = `"${selectedFont}", sans-serif`;
+            
+            // Adjust preview background based on theme
+            if (currentTheme === 'light') {
+                frame.style.background = '#f0f4f7';
+                frame.style.color = '#1a1a1a';
+                if (document.getElementById('preview-name')) document.getElementById('preview-name').style.color = '#1a1a1a';
+            } else {
+                frame.style.background = '#050505';
+                frame.style.color = 'white';
+                if (document.getElementById('preview-name')) document.getElementById('preview-name').style.color = 'white';
+            }
+            
+            // Apply accent to preview elements
+            document.querySelectorAll('#preview-frame .text-cyan-400').forEach(el => el.style.color = currentAccent);
+            if (previewBar) previewBar.style.backgroundColor = currentAccent;
+            if (previewBtn) previewBtn.style.backgroundColor = currentAccent;
+            
+            if (document.getElementById('current-hex')) document.getElementById('current-hex').innerText = currentAccent.toUpperCase();
+            if (document.getElementById('accent-preview')) document.getElementById('accent-preview').style.backgroundColor = currentAccent;
+        }
+
+        // --- Notification Logic ---
+        const bell = document.getElementById('notification-bell');
+        const dropdown = document.getElementById('notif-dropdown');
+        const badge = document.getElementById('notif-badge');
+        const notifList = document.getElementById('notif-list');
+
+        bell.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+        };
+
+        window.onclick = () => dropdown.classList.add('hidden');
+
+        function renderNotifications() {
+            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
+            const unread = notifications.filter(n => !n.read).length;
+            
+            badge.classList.toggle('hidden', unread === 0);
+            
+            if (notifications.length === 0) {
+                notifList.innerHTML = `<div class="p-8 text-center text-gray-400"><p class="text-sm">No new notifications</p></div>`;
+                return;
+            }
+
+            notifList.innerHTML = notifications.map(n => `
+                <div class="px-4 py-3 hover:bg-gray-50 transition-colors flex gap-3 ${n.read ? 'opacity-60' : 'bg-medical-sidebar/5 border-l-2 border-medical-sidebar'}">
+                    <div class="bg-whatsapp rounded-full w-8 h-8 flex items-center justify-center shrink-0" style="background-color: #25D366">
+                        <i data-lucide="message-square" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-gray-800">${n.client}</p>
+                        <p class="text-[10px] text-gray-500">${n.title} (${n.category})</p>
+                        <p class="text-[9px] text-gray-400 mt-1">${n.time}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function clearNotifications() {
+            localStorage.setItem('adminNotifications', '[]');
+            renderNotifications();
+        }
+
+        // Listen for new inquiries from other tabs
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'adminNotifications') renderNotifications();
+        });
+
+        // --- Admin Profile & Team Logic ---
+        function initAdminUsers() {
+            let admins = JSON.parse(localStorage.getItem('adminUsers'));
+            if (!admins) {
+                admins = [{ username: 'avinashpandit9958', password: 'Avinash9958', name: 'Avinash Pandit', role: 'super-admin' }];
+                localStorage.setItem('adminUsers', JSON.stringify(admins));
+            }
+            return admins;
+        }
+
+        const currentLoggedInUser = 'avinashpandit9958'; // In real app, get from session
+
+        function openAdminProfileModal() {
+            const modal = document.getElementById('admin-profile-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Populate current data
+            document.getElementById('current-username').value = currentLoggedInUser;
+            renderAdminTeam();
+        }
+
+        function closeAdminProfileModal() {
+            document.getElementById('admin-profile-modal').classList.add('hidden');
+            document.getElementById('admin-profile-modal').classList.remove('flex');
+        }
+
+        function switchProfileTab(tab) {
+            const myBtn = document.getElementById('tab-my');
+            const teamBtn = document.getElementById('tab-team');
+            const myPane = document.getElementById('profile-pane-my');
+            const teamPane = document.getElementById('profile-pane-team');
+
+            if (tab === 'my') {
+                myBtn.className = "pb-2 px-1 text-sm font-bold border-b-2 border-medical-sidebar text-medical-sidebar transition-all";
+                teamBtn.className = "pb-2 px-1 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-all";
+                myPane.classList.remove('hidden');
+                teamPane.classList.add('hidden');
+            } else {
+                teamBtn.className = "pb-2 px-1 text-sm font-bold border-b-2 border-medical-sidebar text-medical-sidebar transition-all";
+                myBtn.className = "pb-2 px-1 text-sm font-bold border-b-2 border-transparent text-gray-400 hover:text-gray-600 transition-all";
+                teamPane.classList.remove('hidden');
+                myPane.classList.add('hidden');
+            }
+        }
+
+        function updateMyCredentials(e) {
+            e.preventDefault();
+            const newU = document.getElementById('new-username').value;
+            const newP = document.getElementById('new-password').value;
+
+            let admins = initAdminUsers();
+            const index = admins.findIndex(a => a.username === currentLoggedInUser);
+            
+            if (index !== -1) {
+                admins[index].username = newU;
+                admins[index].password = newP;
+                localStorage.setItem('adminUsers', JSON.stringify(admins));
+                alert("✅ Security credentials updated successfully!");
+                location.reload(); // Refresh to ensure session sync or simple reset
+            }
+        }
+
+        function renderAdminTeam() {
+            const admins = initAdminUsers();
+            const list = document.getElementById('admin-list');
+            document.getElementById('admin-count').innerText = admins.length;
+            
+            list.innerHTML = admins.map(a => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-medical-sidebar text-white flex items-center justify-center font-bold text-xs uppercase">
+                            ${a.name ? a.name[0] : a.username[0]}
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-800">${a.name || a.username}</p>
+                            <p class="text-[9px] text-gray-400 capitalize">${a.role || 'Admin'}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addNewAdmin(e) {
+            e.preventDefault();
+            const u = document.getElementById('add-admin-user').value;
+            const p = document.getElementById('add-admin-pass').value;
+
+            let admins = initAdminUsers();
+            if (admins.some(a => a.username === u)) {
+                alert("User already exists!");
+                return;
+            }
+
+            admins.push({ username: u, password: p, name: u, role: 'admin' });
+            localStorage.setItem('adminUsers', JSON.stringify(admins));
+            
+            alert(`👤 ${u} has been added to the admin team!`);
+            renderAdminTeam();
+            e.target.reset();
+        }
+
+        // initial load
+        renderNotifications();
+        initAdminUsers();
+
+        // Color spectrometer logic
+        const spectrometer = document.getElementById('color-spectrometer');
+        spectrometer.addEventListener('mousemove', (e) => {
+            if (e.buttons === 1 || e.buttons === 0) { // Follow cursor
+                const rect = spectrometer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percent = Math.min(Math.max(x / rect.width, 0), 1);
+                
+                // Simple HSL to Hex approximate for the sweep
+                const hue = Math.floor(percent * 360);
+                currentAccent = `hsl(${hue}, 70%, 50%)`;
+                
+                // Convert HSL to Hex for storage
+                const s = 70, l = 50;
+                const h = hue;
+                const a = s * Math.min(l, 100 - l) / 100;
+                const f = n => {
+                    const k = (n + h / 30) % 12;
+                    const color = l / 100 - a / 100 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                    return Math.round(255 * color).toString(16).padStart(2, '0');
+                };
+                currentAccent = `#${f(0)}${f(8)}${f(4)}`;
+                updateLivePreview();
+            }
+        });
+
+        function saveAppearanceSettings() {
+            const siteName = document.getElementById('site-name-input').value;
+            const config = {
+                name: siteName || "Avinash Editz",
+                accent: currentAccent,
+                bg: currentTheme === 'dark' ? '#050505' : '#f0f4f7',
+                theme: currentTheme
+            };
+            localStorage.setItem('siteConfig', JSON.stringify(config));
+            localStorage.setItem('siteFont', selectedFont);
+            localStorage.setItem('siteTheme', currentTheme);
+            
+            alert("✨ Appearance deployed to live site!");
+        }
+
+        // --- Real-time Analytics Chart ---
+        const rCtx = document.getElementById('realtimeChart').getContext('2d');
+        const realtimeChart = new Chart(rCtx, {
+            type: 'line',
+            data: {
+                labels: Array(10).fill(''),
+                datasets: [
+                    {
+                        label: 'Direct',
+                        data: Array(10).fill(0).map(() => Math.floor(Math.random() * 100)),
+                        borderColor: '#1d90a7',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'Social',
+                        data: Array(10).fill(0).map(() => Math.floor(Math.random() * 80)),
+                        borderColor: '#3ab6c5',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            realtimeChart.data.datasets.forEach(dataset => {
+                dataset.data.shift();
+                dataset.data.push(Math.floor(Math.random() * 100));
+            });
+            realtimeChart.update('none');
+        }, 2000);
+
+        // Initial Render
+        window.onload = () => {
+            renderVideos();
+            updateLivePreview();
+        };
+
+        // --- Patient Flow Bar Chart ---
+        const bCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(bCtx, {
+            type: 'bar',
+            data: {
+                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                datasets: [{
+                    label: 'Arrivals',
+                    data: [12, 19, 15, 12, 22, 10, 15],
+                    backgroundColor: '#1d90a7',
+                    borderRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { stepSize: 5 }
+                    }
+                }
+            }
+        });
+
+        // --- Patient Flow Line Chart ---
+        const lCtx = document.getElementById('lineChart').getContext('2d');
+        new Chart(lCtx, {
+            type: 'line',
+            data: {
+                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                datasets: [{
+                    label: 'History',
+                    data: [5, 12, 8, 14, 11, 7, 10],
+                    borderColor: '#1d90a7',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    fill: true,
+                    backgroundColor: 'rgba(29, 144, 167, 0.05)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { display: false },
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { stepSize: 5 }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
