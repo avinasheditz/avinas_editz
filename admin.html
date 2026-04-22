@@ -35,13 +35,17 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         :root { --admin-font-size: 14px; }
         body { background-color: #f0f4f7; color: #333; font-size: var(--admin-font-size); transition: all 0.3s ease; }
         body.dark { background-color: #0a0a0a; color: #f0f4f7; }
         
         .sidebar-item { transition: all 0.2s ease; cursor: pointer; }
-        .sidebar-item.active { background: #1d90a7; color: #fff; border-radius: 12px; }
+        .sidebar-item.active { background: #166d7e; color: #fff; border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         
         .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); transition: background 0.3s ease, color 0.3s ease; }
         body.dark .card { background: #1a1a1a; border-color: #333; color: #fff; }
@@ -346,6 +350,36 @@
                                 </div>
                                 <p class="text-[10px] text-gray-400 mt-2 italic font-medium">Swipe to toggle the live website between Dark and Light.</p>
                             </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-400 mb-4 tracking-widest font-bold">Atmospheric Vibes</label>
+                                <div class="grid grid-cols-3 gap-3" id="atmosphere-selector">
+                                    <button onclick="selectAtmosphere('cinematic')" class="p-2 rounded-xl border-2 border-medical-sidebar bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-cinematic">
+                                        <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-cyan-500 to-pink-500 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Cinematic</span>
+                                    </button>
+                                    <button onclick="selectAtmosphere('noir')" class="p-2 rounded-xl border-2 border-transparent bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-noir">
+                                        <div class="w-full aspect-square rounded-lg bg-black border border-gray-100 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Noir</span>
+                                    </button>
+                                    <button onclick="selectAtmosphere('neon')" class="p-2 rounded-xl border-2 border-transparent bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-neon">
+                                        <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-purple-600 to-pink-600 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Neon</span>
+                                    </button>
+                                    <button onclick="selectAtmosphere('emerald')" class="p-2 rounded-xl border-2 border-transparent bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-emerald">
+                                        <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-emerald-500 to-teal-800 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Emerald</span>
+                                    </button>
+                                    <button onclick="selectAtmosphere('amber')" class="p-2 rounded-xl border-2 border-transparent bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-amber">
+                                        <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-orange-500 to-red-800 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Amber</span>
+                                    </button>
+                                    <button onclick="selectAtmosphere('frost')" class="p-2 rounded-xl border-2 border-transparent bg-gray-50 flex flex-col items-center gap-2 group transition-all" id="atm-frost">
+                                        <div class="w-full aspect-square rounded-lg bg-gradient-to-br from-blue-100 to-indigo-200 border border-indigo-300 opacity-80 group-hover:opacity-100 shadow-sm"></div>
+                                        <span class="text-[9px] font-bold uppercase">Frost</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -478,6 +512,21 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Global Real-Time Map -->
+                <div class="md:col-span-3 card p-8 border-t-4 border-medical-sidebar">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="font-bold text-gray-800 text-xl font-display uppercase tracking-widest">Real-Time Visitor Pulse</h3>
+                            <p class="text-xs text-gray-400 font-medium">Live geographic intelligence from your global audience.</p>
+                        </div>
+                        <div class="flex items-center gap-2 px-3 py-1 bg-medical-sidebar/10 rounded-full">
+                            <span class="w-2 h-2 rounded-full bg-medical-sidebar animate-ping"></span>
+                            <span class="text-[10px] font-bold text-medical-sidebar uppercase tracking-tighter">Live Telemetry</span>
+                        </div>
+                    </div>
+                    <div id="visitor-map" class="h-[450px] rounded-2xl border border-gray-100 overflow-hidden shadow-inner bg-gray-50"></div>
+                </div>
+
                 <!-- Detailed Chart Analytics -->
                 <div class="md:col-span-2 card p-8">
                     <div class="flex justify-between items-center mb-8">
@@ -666,26 +715,102 @@
 
         // --- View Switching ---
         function switchView(viewId) {
+            console.log("Switching to view:", viewId);
+            
             // Update Nav UI
             document.querySelectorAll('.sidebar-item').forEach(item => {
                 item.classList.remove('active');
-                item.classList.add('opacity-70', 'hover:opacity-100');
+                item.classList.add('opacity-70');
             });
-            const activeNav = document.getElementById(`nav-${viewId}`);
-            if(activeNav) {
+            
+            const activeNav = document.getElementById('nav-' + viewId);
+            if (activeNav) {
                 activeNav.classList.add('active');
-                activeNav.classList.remove('opacity-70', 'hover:opacity-100');
+                activeNav.classList.remove('opacity-70');
             }
 
             // Update View Display
             document.querySelectorAll('.view').forEach(view => {
-                view.classList.remove('view-active');
-                view.classList.add('hidden');
+                view.style.display = 'none';
             });
-            const activeView = document.getElementById(`view-${viewId}`);
-            if(activeView) {
-                activeView.classList.add('view-active');
-                activeView.classList.remove('hidden');
+            
+            const activeView = document.getElementById('view-' + viewId);
+            if (activeView) {
+                activeView.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            // Init Map if Analytics
+            if (viewId === 'analytics') {
+                setTimeout(() => {
+                    if (typeof initVisitorMap === 'function') initVisitorMap();
+                }, 300);
+            }
+            
+            // Re-render videos if portfolio
+            if (viewId === 'portfolio') {
+                if (typeof renderVideos === 'function') renderVideos();
+            }
+        }
+
+        // --- Global Map Logic ---
+        let visitorMap;
+        let mapMarkers = [];
+
+        function initVisitorMap() {
+            try {
+                if (visitorMap) {
+                    visitorMap.invalidateSize();
+                    return;
+                }
+                
+                const mapEl = document.getElementById('visitor-map');
+                if (!mapEl) return;
+
+                visitorMap = L.map('visitor-map').setView([20, 0], 2);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap & CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 20
+                }).addTo(visitorMap);
+                
+                updateVisitorMap();
+            } catch (e) {
+                console.error("Map initialization failed:", e);
+            }
+        }
+
+        function updateVisitorMap() {
+            try {
+                if (!visitorMap) return;
+                
+                // Clear old markers
+                mapMarkers.forEach(m => {
+                    try { visitorMap.removeLayer(m); } catch(err) {}
+                });
+                mapMarkers = [];
+
+                const visitors = JSON.parse(localStorage.getItem('liveVisitors') || '[]');
+                
+                visitors.forEach(v => {
+                    if (v.lat && v.lon) {
+                        try {
+                            const marker = L.circleMarker([v.lat, v.lon], {
+                                radius: 6,
+                                fillColor: '#1d90a7',
+                                color: '#fff',
+                                weight: 2,
+                                opacity: 1,
+                                fillOpacity: 0.8
+                            }).addTo(visitorMap)
+                            .bindPopup(`<b class="text-xs">${v.city}, ${v.country}</b><br><span class="text-[10px] text-gray-500">${v.time}</span>`);
+                            
+                            mapMarkers.push(marker);
+                        } catch (e) {}
+                    }
+                });
+            } catch (e) {
+                console.error("Map update failed:", e);
             }
         }
 
@@ -776,6 +901,8 @@
         let selectedFont = localStorage.getItem('siteFont') || 'Inter';
         let currentAccent = '#1d90a7';
         let currentTheme = localStorage.getItem('siteTheme') || 'dark';
+        let currentCurrency = 'INR';
+        let currentAtmosphere = 'cinematic';
 
         // Admin Panel Settings
         function applyAdminTheme(isDark) {
@@ -796,6 +923,20 @@
         function handleSiteThemeSwipe(val) {
             setTheme(val == 0 ? 'dark' : 'light');
             document.getElementById('site-theme-swipe').value = val;
+        }
+
+        function selectAtmosphere(atm) {
+            currentAtmosphere = atm;
+            document.querySelectorAll('#atmosphere-selector button').forEach(btn => {
+                btn.classList.remove('border-medical-sidebar');
+                btn.classList.add('border-transparent');
+            });
+            const selectedBtn = document.getElementById(`atm-${atm}`);
+            if (selectedBtn) {
+                selectedBtn.classList.add('border-medical-sidebar');
+                selectedBtn.classList.remove('border-transparent');
+            }
+            updateLivePreview();
         }
 
         function updateAdminFontSize(size) {
@@ -863,6 +1004,29 @@
             
             if (document.getElementById('current-hex')) document.getElementById('current-hex').innerText = currentAccent.toUpperCase();
             if (document.getElementById('accent-preview')) document.getElementById('accent-preview').style.backgroundColor = currentAccent;
+
+            // Apply atmosphere to preview
+            const atmospheres = {
+                cinematic: "radial-gradient(circle at 5% 5%, rgba(0, 242, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 95% 95%, rgba(219, 39, 119, 0.08) 0%, transparent 50%), radial-gradient(circle at 50% 10%, rgba(40, 20, 100, 0.1) 0%, transparent 70%)",
+                noir: "radial-gradient(circle at 50% 50%, rgba(30, 30, 30, 0.15) 0%, #000 100%)",
+                neon: "radial-gradient(circle at 20% 10%, rgba(168, 85, 247, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 90%, rgba(236, 72, 153, 0.1) 0%, transparent 60%)",
+                emerald: "radial-gradient(circle at 5% 5%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), radial-gradient(circle at 95% 95%, rgba(4, 120, 87, 0.1) 0%, transparent 50%)",
+                amber: "radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.15) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.1) 0%, transparent 60%)",
+                frost: "radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, #fff 100%)"
+            };
+            const previewFrame = document.getElementById('preview-frame');
+            if (previewFrame && atmospheres[currentAtmosphere]) {
+                previewFrame.style.background = atmospheres[currentAtmosphere];
+                if (currentAtmosphere === 'frost') {
+                    previewFrame.style.backgroundColor = '#f0f4f7';
+                    previewFrame.style.color = '#1a1a1a';
+                    previewName.style.color = '#1a1a1a';
+                } else {
+                    previewFrame.style.backgroundColor = '#050505';
+                    previewFrame.style.color = 'white';
+                    previewName.style.color = 'white';
+                }
+            }
         }
 
         // --- Notification Logic ---
@@ -909,13 +1073,13 @@
             renderNotifications();
         }
 
-        // Listen for new inquiries from other tabs
+        // Listen for new inquiries or visitors from other tabs
         window.addEventListener('storage', (e) => {
             if (e.key === 'adminNotifications') renderNotifications();
+            if (e.key === 'liveVisitors') updateVisitorMap();
         });
 
         // --- Admin Profile & Team Logic ---
-        let currentCurrency = 'INR';
 
         function setCurrency(cur) {
             currentCurrency = cur;
@@ -948,6 +1112,10 @@
                 document.getElementById('price-basic').value = config.pricing.basic || '';
                 document.getElementById('price-standard').value = config.pricing.standard || '';
                 document.getElementById('price-premium').value = config.pricing.premium || '';
+            }
+
+            if (config && config.atmosphere) {
+                selectAtmosphere(config.atmosphere);
             }
 
             return admins;
@@ -1045,36 +1213,6 @@
             e.target.reset();
         }
 
-        // initial load
-        renderNotifications();
-        initAdminUsers();
-
-        // Color spectrometer logic
-        const spectrometer = document.getElementById('color-spectrometer');
-        spectrometer.addEventListener('mousemove', (e) => {
-            if (e.buttons === 1 || e.buttons === 0) { // Follow cursor
-                const rect = spectrometer.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const percent = Math.min(Math.max(x / rect.width, 0), 1);
-                
-                // Simple HSL to Hex approximate for the sweep
-                const hue = Math.floor(percent * 360);
-                currentAccent = `hsl(${hue}, 70%, 50%)`;
-                
-                // Convert HSL to Hex for storage
-                const s = 70, l = 50;
-                const h = hue;
-                const a = s * Math.min(l, 100 - l) / 100;
-                const f = n => {
-                    const k = (n + h / 30) % 12;
-                    const color = l / 100 - a / 100 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                    return Math.round(255 * color).toString(16).padStart(2, '0');
-                };
-                currentAccent = `#${f(0)}${f(8)}${f(4)}`;
-                updateLivePreview();
-            }
-        });
-
         function saveAppearanceSettings() {
             const siteName = document.getElementById('site-name-input').value;
             const config = {
@@ -1082,6 +1220,7 @@
                 accent: currentAccent,
                 bg: currentTheme === 'dark' ? '#050505' : '#f0f4f7',
                 theme: currentTheme,
+                atmosphere: currentAtmosphere,
                 pricing: {
                     currency: currentCurrency,
                     basic: document.getElementById('price-basic').value,
@@ -1096,114 +1235,177 @@
             alert("✨ Appearance & Pricing deployed to live site!");
         }
 
-        // --- Real-time Analytics Chart ---
-        const rCtx = document.getElementById('realtimeChart').getContext('2d');
-        const realtimeChart = new Chart(rCtx, {
-            type: 'line',
-            data: {
-                labels: Array(10).fill(''),
-                datasets: [
-                    {
-                        label: 'Direct',
-                        data: Array(10).fill(0).map(() => Math.floor(Math.random() * 100)),
-                        borderColor: '#1d90a7',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Social',
-                        data: Array(10).fill(0).map(() => Math.floor(Math.random() * 80)),
-                        borderColor: '#3ab6c5',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-
-        // Simulate real-time updates
-        setInterval(() => {
-            realtimeChart.data.datasets.forEach(dataset => {
-                dataset.data.shift();
-                dataset.data.push(Math.floor(Math.random() * 100));
-            });
-            realtimeChart.update('none');
-        }, 2000);
-
         // Initial Render
         window.onload = () => {
-            renderVideos();
-            updateLivePreview();
+            try {
+                lucide.createIcons();
+                initAdminUsers();
+                renderNotifications();
+                renderVideos();
+                updateLivePreview();
+                
+                // Color spectrometer logic
+                const spectrometer = document.getElementById('color-spectrometer');
+                if (spectrometer) {
+                    spectrometer.addEventListener('mousemove', (e) => {
+                        if (e.buttons === 1 || e.buttons === 0) { // Follow cursor
+                            const rect = spectrometer.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const percent = Math.min(Math.max(x / rect.width, 0), 1);
+                            
+                            // Simple HSL to Hex approximate for the sweep
+                            const hue = Math.floor(percent * 360);
+                            currentAccent = `hsl(${hue}, 70%, 50%)`;
+                            
+                            // Convert HSL to Hex for storage
+                            const s = 70, l = 50;
+                            const h = hue;
+                            const a = s * Math.min(l, 100 - l) / 100;
+                            const f = n => {
+                                const k = (n + h / 30) % 12;
+                                const color = l / 100 - a / 100 * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                                return Math.round(255 * color).toString(16).padStart(2, '0');
+                            };
+                            currentAccent = `#${f(0)}${f(8)}${f(4)}`;
+                            updateLivePreview();
+                        }
+                    });
+                }
+
+                // Init Charts
+                initCharts();
+                
+                // Apply saved settings
+                const savedAdminTheme = localStorage.getItem('adminTheme') || 'light';
+                const savedAdminFontSize = localStorage.getItem('adminFontSize') || '14';
+                const savedSiteTheme = localStorage.getItem('siteTheme') || 'dark';
+                
+                applyAdminTheme(savedAdminTheme === 'dark');
+                updateAdminFontSize(savedAdminFontSize);
+                if (document.getElementById('admin-font-slider')) document.getElementById('admin-font-slider').value = savedAdminFontSize;
+                if (document.getElementById('site-theme-swipe')) document.getElementById('site-theme-swipe').value = (savedSiteTheme === 'dark' ? 0 : 1);
+            } catch (e) {
+                console.error("Initialization error:", e);
+            }
         };
 
-        // --- Patient Flow Bar Chart ---
-        const bCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(bCtx, {
-            type: 'bar',
-            data: {
-                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-                datasets: [{
-                    label: 'Arrivals',
-                    data: [12, 19, 15, 12, 22, 10, 15],
-                    backgroundColor: '#1d90a7',
-                    borderRadius: 5,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { stepSize: 5 }
-                    }
-                }
-            }
-        });
+        function initCharts() {
+            try {
+                // Real-time Analytics Chart
+                const rCtxEl = document.getElementById('realtimeChart');
+                if (rCtxEl) {
+                    const rCtx = rCtxEl.getContext('2d');
+                    const realtimeChart = new Chart(rCtx, {
+                        type: 'line',
+                        data: {
+                            labels: Array(10).fill(''),
+                            datasets: [
+                                {
+                                    label: 'Direct',
+                                    data: Array(10).fill(0).map(() => Math.floor(Math.random() * 100)),
+                                    borderColor: '#1d90a7',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    pointRadius: 0
+                                },
+                                {
+                                    label: 'Social',
+                                    data: Array(10).fill(0).map(() => Math.floor(Math.random() * 80)),
+                                    borderColor: '#3ab6c5',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    pointRadius: 0
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
 
-        // --- Patient Flow Line Chart ---
-        const lCtx = document.getElementById('lineChart').getContext('2d');
-        new Chart(lCtx, {
-            type: 'line',
-            data: {
-                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-                datasets: [{
-                    label: 'History',
-                    data: [5, 12, 8, 14, 11, 7, 10],
-                    borderColor: '#1d90a7',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    fill: true,
-                    backgroundColor: 'rgba(29, 144, 167, 0.05)'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { 
-                        beginAtZero: true,
-                        ticks: { stepSize: 5 }
-                    }
+                    // Simulate real-time updates
+                    setInterval(() => {
+                        realtimeChart.data.datasets.forEach(dataset => {
+                            dataset.data.shift();
+                            dataset.data.push(Math.floor(Math.random() * 100));
+                        });
+                        realtimeChart.update('none');
+                    }, 2000);
                 }
+
+                // Patient Flow Bar Chart
+                const bCtxEl = document.getElementById('barChart');
+                if (bCtxEl) {
+                    const bCtx = bCtxEl.getContext('2d');
+                    new Chart(bCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                            datasets: [{
+                                label: 'Arrivals',
+                                data: [12, 19, 15, 12, 22, 10, 15],
+                                backgroundColor: '#1d90a7',
+                                borderRadius: 5,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { 
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 5 }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Patient Flow Line Chart
+                const lCtxEl = document.getElementById('lineChart');
+                if (lCtxEl) {
+                    const lCtx = lCtxEl.getContext('2d');
+                    new Chart(lCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                            datasets: [{
+                                label: 'History',
+                                data: [5, 12, 8, 14, 11, 7, 10],
+                                borderColor: '#1d90a7',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                pointRadius: 0,
+                                fill: true,
+                                backgroundColor: 'rgba(29, 144, 167, 0.05)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { 
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 5 }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Chart initialization failed:", e);
             }
-        });
+        }
     </script>
 </body>
 </html>
