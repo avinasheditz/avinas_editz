@@ -448,7 +448,7 @@
                 <div class="glass-card p-10 hover:border-yellow-400/50 transition-all group relative overflow-hidden">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-400/5 rounded-full blur-2xl"></div>
                     <h3 class="text-xl font-bold mb-2 text-yellow-400">BASIC</h3>
-                    <div class="text-4xl font-display font-bold mb-6">₹1,499</div>
+                    <div id="display-price-basic" class="text-4xl font-display font-bold mb-6">$19</div>
                     <ul class="space-y-4 mb-8 text-sm text-white/80">
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> Narrative Storytelling</li>
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> Basic Color Correction</li>
@@ -461,7 +461,7 @@
                 <div class="glass-card p-10 border-red-500/50 cinematic-glow relative overflow-hidden bg-red-500/5">
                     <div class="absolute top-0 right-0 bg-red-500 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">Popular</div>
                     <h3 class="text-xl font-bold mb-2 text-red-500">STANDARD</h3>
-                    <div class="text-4xl font-display font-bold mb-6">₹3,999</div>
+                    <div id="display-price-standard" class="text-4xl font-display font-bold mb-6">$49</div>
                     <ul class="space-y-4 mb-8 text-sm text-white">
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> Advanced Motion FX</li>
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> Custom Sound Design</li>
@@ -474,7 +474,7 @@
                 <div class="glass-card p-10 hover:border-purple-500/50 transition-all group relative overflow-hidden">
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl"></div>
                     <h3 class="text-xl font-bold mb-2 text-purple-500">PREMIUM</h3>
-                    <div class="text-4xl font-display font-bold mb-6">₹8,999</div>
+                    <div id="display-price-premium" class="text-4xl font-display font-bold mb-6">$109</div>
                     <ul class="space-y-4 mb-8 text-sm text-white/80">
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Full Cinematic Master</li>
                         <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Complex 3D Compositing</li>
@@ -851,6 +851,15 @@
                     }
                 });
                 document.title = `${config.name} | Professional Video Editor`;
+            }
+
+            // Sync Pricing
+            if (config.pricing) {
+                const p = config.pricing;
+                const symbol = p.currency === 'INR' ? '₹' : '$';
+                if (p.basic) document.getElementById('display-price-basic').innerText = symbol + p.basic;
+                if (p.standard) document.getElementById('display-price-standard').innerText = symbol + p.standard;
+                if (p.premium) document.getElementById('display-price-premium').innerText = symbol + p.premium;
             }
             
             if (config.accent) {
