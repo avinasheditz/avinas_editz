@@ -810,18 +810,28 @@
             gatewayModal.classList.remove('hidden');
             gatewayModal.classList.add('flex');
             document.body.classList.add('modal-active');
-            gsap.from("#gateway-modal > div", { scale: 0.9, opacity: 0, duration: 0.8, ease: "back.out(1.7)" });
+            // Fix: explicit fromTo to prevent getting stuck in "hidden" animation state
+            gsap.fromTo("#gateway-modal > div", 
+                { scale: 0.9, opacity: 0 }, 
+                { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)", clearProps: "all" }
+            );
         };
 
         const closeGateway = (path) => {
+            if (!gatewayModal) return;
             if (path === 'visitor') {
-                gsap.to("#gateway-modal > div", { scale: 1.1, opacity: 0, duration: 0.5, onComplete: () => {
-                    gatewayModal.classList.add('hidden');
-                    gatewayModal.classList.remove('flex');
-                    document.body.classList.remove('modal-active');
-                }});
+                sessionStorage.setItem('gateway_selection', 'visitor');
             }
+            
+            gsap.to("#gateway-modal > div", { scale: 1.1, opacity: 0, duration: 0.5, onComplete: () => {
+                gatewayModal.classList.add('hidden');
+                gatewayModal.classList.remove('flex');
+                document.body.classList.remove('modal-active');
+            }});
         };
+
+        // Add overlay click to close (optional but recommended for UX)
+        document.getElementById('gateway-overlay')?.addEventListener('click', () => closeGateway());
 
         const handleGatewayLogin = (e) => {
             e.preventDefault();
@@ -856,7 +866,10 @@
             }
         };
 
-        const openLoginModal = () => openGateway();
+        const openLoginModal = () => {
+            // Force open the gateway even if session exists
+            openGateway();
+        };
         const closeMobileMenu = () => mobileMenu.classList.add('hidden');
 
         // Site Sync Logic
@@ -1013,13 +1026,22 @@
                         delay: 1, 
                         onComplete: () => {
                             loader.style.display = 'none';
-                            openGateway(); // Trigger Gateway Pop-up
+                            // Logic to show gateway only once
+                            const hasSelection = sessionStorage.getItem('gateway_selection');
+                            const hasSession = sessionStorage.getItem('admin_session');
+                            if (!hasSelection && !hasSession) {
+                                openGateway();
+                            }
                         } 
                     });
                 } else {
                     setTimeout(() => {
                         loader.style.display = 'none';
-                        openGateway();
+                        const hasSelection = sessionStorage.getItem('gateway_selection');
+                        const hasSession = sessionStorage.getItem('admin_session');
+                        if (!hasSelection && !hasSession) {
+                            openGateway();
+                        }
                     }, 1000);
                 }
             }
