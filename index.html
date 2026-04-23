@@ -89,6 +89,18 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
+        #sticky-hire-bar {
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 2s;
+            opacity: 0;
+            transform: translateY(100%);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(100%); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Cinematic Background Elements */
         .section-bg {
             position: absolute;
@@ -386,6 +398,9 @@
                         <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="cinematic">Cinematic</button>
                         <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="reels">Reels</button>
                         <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="gaming">Gaming</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="branding">Branding</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="events">Event Coverage</button>
+                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="docu">Documentary</button>
                     </div>
                 </div>
 
@@ -458,7 +473,7 @@
                     </ul>
                     <button class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-yellow-400 hover:text-brand-dark transition-all open-contact">Get Started</button>
                 </div>
-                <div class="glass-card p-10 border-red-500/50 cinematic-glow relative overflow-hidden bg-red-500/5">
+                <div class="glass-card p-10 border-red-500 border-2 cinematic-glow relative overflow-hidden bg-red-500/10 scale-105 z-10 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
                     <div class="absolute top-0 right-0 bg-red-500 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">Popular</div>
                     <h3 class="text-xl font-bold mb-2 text-red-500">STANDARD</h3>
                     <div id="display-price-standard" class="text-4xl font-display font-bold mb-6">$49</div>
@@ -590,23 +605,32 @@
         <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" id="contact-modal-overlay"></div>
         <div class="relative w-full max-w-xl bg-brand-dark border border-white/10 rounded-[32px] overflow-hidden p-8 animate-in fade-in zoom-in duration-300">
             <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-display font-bold">New Inquiry</h3>
+                <h3 class="text-2xl font-display font-bold">Project Brief</h3>
                 <button id="contact-modal-close" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
             </div>
             
             <div class="flex gap-2 p-1 bg-white/5 rounded-2xl mb-8" id="contact-tab-headers">
-                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn active bg-brand-accent text-brand-dark" data-tab="0">Name</button>
-                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="1">Purpose</button>
-                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="2">Mail</button>
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn active bg-brand-accent text-brand-dark" data-tab="0">1. Details</button>
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="1">2. Budget</button>
+                <button class="flex-1 py-3 rounded-xl text-xs font-bold uppercase transition-all tab-btn" data-tab="2">3. Contact</button>
             </div>
 
             <form id="inquiry-form">
                 <div class="tab-content active" data-tab-id="0">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Name</label>
-                    <input type="text" id="inquiry-name" required placeholder="Your name" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Project Name</label>
+                    <input type="text" id="inquiry-project-name" required placeholder="e.g. My Awesome Montage" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none mb-4">
+                    
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Reference Video Link (YouTube/Drive/Vimeo)</label>
+                    <input type="url" id="inquiry-video-url" placeholder="Paste link for more details..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none mb-4">
+
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Project Brief (Description)</label>
+                    <textarea id="inquiry-description" required rows="3" placeholder="Tell me about your vision..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none resize-none"></textarea>
                 </div>
                 <div class="tab-content" data-tab-id="1">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Purpose</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Estimated Budget ($)</label>
+                    <input type="number" id="inquiry-price" required placeholder="e.g. 50" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none mb-4 text-brand-accent font-bold text-xl">
+                    
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Category</label>
                     <select id="inquiry-type" class="w-full bg-[#111] border border-white/10 rounded-2xl p-4 outline-none">
                         <option>Cinematic Edit</option>
                         <option>YouTube Video</option>
@@ -615,8 +639,10 @@
                     </select>
                 </div>
                 <div class="tab-content" data-tab-id="2">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Message</label>
-                    <textarea id="inquiry-message" required rows="3" placeholder="Details..." class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 outline-none resize-none"></textarea>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Your Name</label>
+                    <input type="text" id="inquiry-client-name" required placeholder="How should I call you?" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 outline-none">
+                    
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Email Address</label>
                     <input type="email" id="inquiry-email" required placeholder="Your email" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none">
                 </div>
 
@@ -725,17 +751,17 @@
 
         // Contact Modal Logic
         let contactTab = 0;
-        const openContactModal = () => {
+        function openContactModal() {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.classList.add('modal-active');
             updateContactTabs();
-        };
-        const closeContactModal = () => {
+        }
+        function closeContactModal() {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.classList.remove('modal-active');
-        };
+        }
         document.querySelectorAll('.open-contact').forEach(btn => btn.addEventListener('click', openContactModal));
         modalOverlay.addEventListener('click', closeContactModal);
         modalClose.addEventListener('click', closeContactModal);
@@ -767,40 +793,66 @@
         contactBtnPrev.addEventListener('click', () => { if (contactTab > 0) { contactTab--; updateContactTabs(); } });
 
         // Form Submit -> WhatsApp
-        inquiryForm.addEventListener('submit', (e) => {
+        inquiryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('inquiry-name').value;
+            const btn = document.getElementById('tab-submit');
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Submitting...';
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            const projectName = document.getElementById('inquiry-project-name').value;
+            const description = document.getElementById('inquiry-description').value;
+            const videoUrl = document.getElementById('inquiry-video-url').value;
+            const price = document.getElementById('inquiry-price').value;
             const type = document.getElementById('inquiry-type').value;
-            const message = document.getElementById('inquiry-message').value;
+            const clientName = document.getElementById('inquiry-client-name').value;
             const email = document.getElementById('inquiry-email').value;
 
-            const waMessage = encodeURIComponent(
-                `🚀 *NEW ORDER INQUIRY* 🚀\n\n` +
-                `*Client Name:* ${name}\n` +
-                `*Email:* ${email}\n` +
-                `*Service:* ${type}\n\n` +
-                `*Project Details:* ${message}`
-            );
+            const projectData = {
+                projectName,
+                description,
+                videoUrl,
+                price,
+                type,
+                clientName,
+                email,
+                status: 'pending',
+                createdAt: (typeof serverTimestamp === 'function') ? serverTimestamp() : Date.now()
+            };
 
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`, '_blank');
-            
-            // Sync with Admin Panel Notifications
-            const notifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-            notifications.unshift({
-                id: Date.now(),
-                type: 'whatsapp',
-                title: 'New WhatsApp Inquiry',
-                client: name,
-                category: type,
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                read: false
-            });
-            localStorage.setItem('adminNotifications', JSON.stringify(notifications));
+            try {
+                if (window.siteDb) {
+                    const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js");
+                    await addDoc(collection(window.siteDb, 'projectRequests'), projectData);
+                }
+                
+                const waMessage = encodeURIComponent(
+                    `🚀 *NEW PROJECT BRIEF* 🚀\n\n` +
+                    `*Project:* ${projectName}\n` +
+                    `*Video:* ${videoUrl || 'No link provided'}\n\n` +
+                    `*Budget:* $${price}\n` +
+                    `*Client:* ${clientName}\n` +
+                    `*Category:* ${type}\n\n` +
+                    `*Details:* ${description}`
+                );
 
-            closeContactModal();
-            inquiryForm.reset();
-            contactTab = 0;
-            updateContactTabs();
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`, '_blank');
+                
+                // Close and Reset first to provide immediate visual feedback
+                closeContactModal();
+                inquiryForm.reset();
+                contactTab = 0;
+                updateContactTabs();
+                btn.innerHTML = 'Send Inquiry';
+                
+                // Show confirmation after the UI has updated
+                setTimeout(() => {
+                    alert("Project request sent! I will review it shortly.");
+                }, 100);
+            } catch (err) {
+                console.error("Submission failed:", err);
+                alert("Submission failed. Please try again.");
+                btn.innerHTML = 'Send Inquiry';
+            }
         });
 
         // Selection Gateway Logic
@@ -878,9 +930,12 @@
             const storedFont = localStorage.getItem('siteFont');
             const storedTheme = localStorage.getItem('siteTheme') || 'dark';
             const storedVideos = JSON.parse(localStorage.getItem('portfolioVideos')) || [
-                { id: 1, title: "Travel Edit", category: "cinematic", url: "https://picsum.photos/seed/travel/800/600" },
-                { id: 2, title: "Viral Edit", category: "reels", url: "https://picsum.photos/seed/reel/800/600" },
-                { id: 3, title: "Pro Montage", category: "gaming", url: "https://picsum.photos/seed/gaming/800/600" }
+                { id: 1, title: "Travel Edit", category: "cinematic", url: "https://images.unsplash.com/photo-1502444330042-d1a1ddf9bb5b?auto=format&fit=crop&q=80&w=800" },
+                { id: 2, title: "Viral Reel", category: "reels", url: "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&q=80&w=800" },
+                { id: 3, title: "Pro Gaming Showcase", category: "gaming", url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=800" },
+                { id: 4, title: "Corporate Branding", category: "branding", url: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&q=80&w=800" },
+                { id: 5, title: "Grand Wedding Highlights", category: "events", url: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" },
+                { id: 6, title: "Street Life Story", category: "docu", url: "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&q=80&w=800" }
             ];
 
             if (storedFont) {
@@ -964,45 +1019,64 @@
                 grid.innerHTML = storedVideos.map(video => `
                     <div class="portfolio-item ${video.category} relative aspect-video rounded-3xl overflow-hidden border border-white/5 group">
                         <img src="${video.url}" class="w-full h-full object-cover transition-transform group-hover:scale-110">
-                        <div class="absolute inset-0 bg-brand-dark/80 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <span class="text-brand-accent text-xs font-bold uppercase">${video.category}</span>
-                            <h3 class="text-xl font-bold text-white">${video.title}</h3>
-                        </div>
+                            <div class="absolute inset-0 bg-brand-dark/80 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <span class="text-brand-accent text-xs font-bold uppercase">${video.category}</span>
+                                <h3 class="text-xl font-display font-bold text-white flex items-center justify-between gap-2">
+                                    <div class="flex items-center gap-2">
+                                        ${video.category === 'branding' ? '<i data-lucide="award" class="w-5 h-5 text-brand-accent"></i>' : ''}
+                                        ${video.title}
+                                    </div>
+                                    <button class="remove-item p-1 hover:text-red-500 transition-colors" title="Remove from view" onclick="this.closest('.portfolio-item').remove()">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </h3>
+                            </div>
                     </div>
                 `).join('');
                 
                 // Re-init icons if any (none currently, but for safety)
                 if (typeof lucide !== 'undefined') lucide.createIcons();
+                
+                // Initialize filters after items are rendered
+                initPortfolioFilters();
             }
+        }
+        
+        // Portfolio Filter Logic
+        function initPortfolioFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+            filterBtns.forEach(btn => {
+                // Remove existing listeners if any (to prevent duplicates)
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.addEventListener('click', () => {
+                    const filter = newBtn.dataset.filter;
+                    const allBtns = document.querySelectorAll('.filter-btn');
+                    
+                    allBtns.forEach(b => b.classList.remove('active', 'bg-brand-accent', 'text-brand-dark'));
+                    allBtns.forEach(b => b.classList.add('bg-white/5', 'text-gray-500'));
+                    
+                    newBtn.classList.add('active', 'bg-brand-accent', 'text-brand-dark');
+                    newBtn.classList.remove('bg-white/5', 'text-gray-500');
+
+                    portfolioItems.forEach(item => {
+                        if (filter === 'all' || item.classList.contains(filter)) {
+                            gsap.to(item, { opacity: 1, scale: 1, duration: 0.4, display: 'block' });
+                        } else {
+                            gsap.to(item, { opacity: 0, scale: 0.8, duration: 0.4, display: 'none' });
+                        }
+                    });
+                });
+            });
         }
         
         // Remove window.addEventListener('load', syncSiteConfig) to avoid double calls
         // It's already called in window.onload
 
         // End of Login Logic
-
-        // Portfolio Filter
-        const filterBtns = document.querySelectorAll('.filter-btn');
-        const portfolioItems = document.querySelectorAll('.portfolio-item');
-
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const filter = btn.dataset.filter;
-                filterBtns.forEach(b => b.classList.remove('active', 'bg-brand-accent', 'text-brand-dark'));
-                filterBtns.forEach(b => b.classList.add('bg-white/5', 'text-gray-500'));
-                
-                btn.classList.add('active', 'bg-brand-accent', 'text-brand-dark');
-                btn.classList.remove('bg-white/5', 'text-gray-500');
-
-                portfolioItems.forEach(item => {
-                    if (filter === 'all' || item.classList.contains(filter)) {
-                        gsap.to(item, { opacity: 1, scale: 1, duration: 0.4, display: 'block' });
-                    } else {
-                        gsap.to(item, { opacity: 0, scale: 0.8, duration: 0.4, display: 'none' });
-                    }
-                });
-            });
-        });
 
         // Animations (GSAP)
         window.onload = () => {
@@ -1113,6 +1187,9 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app, "ai-studio-40b2636a-0430-44a3-8e2e-023eb33afe3d");
 
+        // Global DB Access for Inquiry
+        window.siteDb = db;
+
         (async () => {
             try {
                 let visitor = {
@@ -1143,6 +1220,57 @@
                 console.log('Cloud pulse failed.', e);
             }
         })();
+
+        // Sticky Bar Logic
+        const stickyBar = document.getElementById('sticky-hire-bar');
+        const closeStickyBtn = document.getElementById('close-sticky-bar');
+        
+        if (closeStickyBtn && stickyBar) {
+            closeStickyBtn.addEventListener('click', () => {
+                stickyBar.style.transform = 'translateY(150%)';
+                stickyBar.style.opacity = '0';
+                setTimeout(() => stickyBar.remove(), 500);
+            });
+        }
+
+        // Manually bind the sticky bar button since it was added after initial scan
+        if (stickyBar) {
+            const hireBtn = stickyBar.querySelector('.open-contact');
+            if (hireBtn && typeof openContactModal === 'function') {
+                hireBtn.addEventListener('click', openContactModal);
+            }
+        }
+
+        // Re-initialize Lucide for new icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     </script>
+    
+    <!-- Sticky Hire Me Bar -->
+    <div id="sticky-hire-bar" class="fixed bottom-0 left-0 w-full z-[100]">
+        <div class="max-w-5xl mx-auto px-4 pb-6">
+            <div class="glass-card p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-brand-accent/30 bg-black/80 relative overflow-hidden group shadow-2xl">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent shrink-0 cinematic-glow">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-display text-lg md:text-xl font-bold leading-tight">Elevate Your Visual Content</h3>
+                        <p class="text-white/60 text-sm hidden md:block">Limited slots available for premium video editing.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <button class="open-contact flex-1 md:flex-initial bg-brand-accent text-black font-bold py-3 px-8 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(0,242,255,0.5)] whitespace-nowrap">
+                        Hire Me Now
+                    </button>
+                    <button id="close-sticky-bar" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors text-white/50 hover:text-white" title="Dismiss">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
