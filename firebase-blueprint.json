@@ -1,1 +1,45 @@
 
+{
+  "entities": {
+    "Visitor": {
+      "title": "Visitor",
+      "description": "Represents a site visitor for real-time tracking.",
+      "type": "object",
+      "properties": {
+        "city": { "type": "string" },
+        "country": { "type": "string" },
+        "lat": { "type": "number" },
+        "lon": { "type": "number" },
+        "time": { "type": "string" },
+        "timestamp": { "type": "number" }
+      },
+      "required": ["lat", "lon", "timestamp"]
+    },
+    "ProjectRequest": {
+      "title": "Project Request",
+      "description": "A formal inquiry from a potential client.",
+      "type": "object",
+      "properties": {
+        "clientName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "projectName": { "type": "string" },
+        "type": { "type": "string" },
+        "price": { "type": "string" },
+        "description": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["clientName", "email", "projectName", "createdAt"]
+    }
+  },
+  "firestore": {
+    "liveVisitors/{visitorId}": {
+      "schema": "Visitor",
+      "description": "Collection of real-time visitor data points."
+    },
+    "projectRequests/{requestId}": {
+      "schema": "ProjectRequest",
+      "description": "Leads and inquiries from the 'Hire Me' workflow."
+    }
+  }
+}
