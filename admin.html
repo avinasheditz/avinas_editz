@@ -553,9 +553,15 @@
                             <h3 class="font-bold text-gray-800 text-xl font-display uppercase tracking-widest">Real-Time Visitor Pulse</h3>
                             <p class="text-xs text-gray-400 font-medium">Live geographic intelligence from your global audience.</p>
                         </div>
-                        <div class="flex items-center gap-2 px-3 py-1 bg-medical-sidebar/10 rounded-full">
-                            <span class="w-2 h-2 rounded-full bg-medical-sidebar animate-ping"></span>
-                            <span class="text-[10px] font-bold text-medical-sidebar uppercase tracking-tighter">Live Telemetry</span>
+                        <div class="flex items-center gap-3">
+                            <div id="total-live-user" class="flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full border border-green-500/20">
+                                <i data-lucide="users" class="w-3 h-3 text-green-500"></i>
+                                <span class="text-[10px] font-bold text-green-600 uppercase tracking-tighter">Live: <span id="live-user-count">0</span></span>
+                            </div>
+                            <div class="flex items-center gap-2 px-3 py-1 bg-medical-sidebar/10 rounded-full">
+                                <span class="w-2 h-2 rounded-full bg-medical-sidebar animate-ping"></span>
+                                <span class="text-[10px] font-bold text-medical-sidebar uppercase tracking-tighter">Live Telemetry</span>
+                            </div>
                         </div>
                     </div>
                     <div id="visitor-map" class="h-[450px] rounded-2xl border border-gray-100 overflow-hidden shadow-inner bg-gray-50"></div>
@@ -886,6 +892,15 @@
                 const visitors = (window.cloudVisitors && window.cloudVisitors.length > 0) 
                     ? window.cloudVisitors 
                     : JSON.parse(localStorage.getItem('liveVisitors') || '[]');
+                
+                // Update Live User Count
+                const countEl = document.getElementById('live-user-count');
+                if (countEl) {
+                    countEl.innerText = visitors.length;
+                    // Pulse animation on update
+                    countEl.parentElement.parentElement.classList.add('scale-110');
+                    setTimeout(() => countEl.parentElement.parentElement.classList.remove('scale-110'), 200);
+                }
                 
                 visitors.forEach(v => {
                     if (v.lat && v.lon) {
@@ -1533,9 +1548,11 @@
         const q = query(collection(db, "liveVisitors"), orderBy("timestamp", "desc"), limit(100));
         onSnapshot(q, (snapshot) => {
             window.cloudVisitors = snapshot.docs.map(doc => doc.data());
+            console.log("Cloud pulse received:", window.cloudVisitors.length, "visitors");
             // Trigger UI update
             if (typeof updateVisitorMap === 'function') {
                 updateVisitorMap();
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         });
     </script>
