@@ -18,7 +18,7 @@
                     },
                     colors: {
                         brand: {
-                            accent: '#00f2ff',
+                            accent: '#3de500',
                             dark: '#050505',
                         }
                     }
@@ -37,7 +37,7 @@
 
     <style>
         :root {
-            --brand-accent: #00f2ff;
+            --brand-accent: #3de500;
             --brand-dark: #050505;
         }
         html { scroll-behavior: smooth; }
@@ -67,7 +67,7 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
             background: 
-                radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 0% 0%, rgba(61, 229, 0, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 100% 100%, rgba(219, 39, 119, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(40, 20, 100, 0.05) 0%, transparent 80%);
             pointer-events: none;
@@ -82,7 +82,7 @@
         }
         .glass-card:hover {
             background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(0, 242, 255, 0.3);
+            border-color: rgba(61, 229, 0, 0.3);
             transform: translateY(-8px) scale(1.02);
         }
 
@@ -93,11 +93,11 @@
         }
 
         .btn-glow {
-            box-shadow: 0 0 0 0 rgba(0, 242, 255, 0);
+            box-shadow: 0 0 0 0 rgba(61, 229, 0, 0);
             transition: all 0.4s ease;
         }
         .btn-glow:hover {
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+            box-shadow: 0 0 30px rgba(61, 229, 0, 0.3);
         }
 
         /* Section Layout Utilities */
@@ -124,23 +124,40 @@
     </div>
 
     <!-- Loading Intro -->
-    <div id="loader" class="fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center">
-        <div class="text-4xl font-display font-bold tracking-tighter" id="loader-text">
-            AVINASH <span class="text-brand-accent">EDITZ</span>
+    <div id="loader" class="fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center text-center">
+        <div class="relative px-4" id="loader-content">
+            <div class="relative inline-block scale-75 md:scale-100">
+                <div class="display-x text-brand-accent text-8xl md:text-[12rem] tracking-tighter opacity-10 animate-pulse absolute inset-0 blur-xl">AE</div>
+                <div class="display-x text-white text-8xl md:text-[12rem] tracking-tighter relative z-10">
+                    A<span class="text-brand-accent animate-pulse-slow">E</span>
+                </div>
+                <div class="mt-4 text-brand-accent font-display font-bold tracking-[1em] uppercase text-xs animate-reveal">Avinash Editz</div>
+            </div>
         </div>
     </div>
 
     <!-- Navigation links updated -->
     <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6">
         <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="bg-brand-accent p-1.5 rounded-lg">
-                    <i data-lucide="video" class="w-6 h-6 text-brand-dark"></i>
+            <a href="#home" class="flex items-center group relative py-2">
+                <div class="relative flex items-center">
+                    <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:border-brand-accent/30 transition-all duration-500 overflow-hidden relative">
+                         <div class="absolute inset-0 bg-brand-accent/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                         <span class="display-x text-brand-accent text-2xl z-10 transition-transform duration-500 group-hover:scale-110">AE</span>
+                    </div>
+                    <div class="ml-4 flex flex-col">
+                        <span class="font-display font-black text-2xl tracking-tighter leading-none group-hover:text-brand-accent transition-colors duration-300">
+                            AVINASH <span class="text-white/40">EDITZ</span>
+                        </span>
+                        <div class="flex items-center gap-1 mt-1 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                            <span class="w-4 h-[1px] bg-brand-accent"></span>
+                            <span class="text-[8px] font-bold tracking-[0.3em] uppercase">Narrative Engine</span>
+                        </div>
+                    </div>
+                    <!-- Hidden glow effect -->
+                    <div class="absolute -inset-4 bg-brand-accent/0 group-hover:bg-brand-accent/5 blur-2xl rounded-full transition-all duration-700 pointer-events-none"></div>
                 </div>
-                <span class="font-display font-bold text-2xl tracking-tighter">
-                    AVINASH <span class="text-brand-accent">EDITZ</span>
-                </span>
-            </div>
+            </a>
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex gap-8 items-center">
@@ -247,16 +264,16 @@
         <!-- About Section -->
         <section id="about" class="py-40 relative">
             <div class="section-container relative z-10">
-                <div class="grid lg:grid-cols-2 gap-24 items-center">
+                <div class="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center px-4">
                     <div class="relative group">
-                        <div class="aspect-[4/5] bg-white/5 rounded-[40px] overflow-hidden border border-white/10 relative">
-                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-60 z-10"></div>
-                            <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&q=80&w=800" alt="Avinash Editz" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110">
+                        <div class="aspect-[4/5] bg-white/5 rounded-[32px] sm:rounded-[40px] overflow-hidden border border-white/10 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent opacity-60 z-10 transition-opacity group-hover:opacity-40"></div>
+                            <img src="https://images.pexels.com/photos/31718971/pexels-photo-31718971.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Avinash Editz" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110">
                         </div>
                         <!-- Floating Badge -->
-                        <div class="absolute -bottom-10 -right-10 glass-card p-8 border-brand-accent/20 bg-brand-dark/80 backdrop-blur-3xl stagger-in">
-                            <div class="display-x text-6xl text-brand-accent mb-2">04</div>
-                            <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Years of Precision</div>
+                        <div class="absolute bottom-4 right-4 sm:-bottom-6 sm:-right-6 lg:-bottom-10 lg:-right-10 glass-card p-5 sm:p-8 border-brand-accent/20 bg-brand-dark/80 backdrop-blur-3xl stagger-in shadow-2xl">
+                            <div class="display-x text-4xl sm:text-6xl text-brand-accent mb-2">04</div>
+                            <div class="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em] sm:tracking-[0.3em] text-gray-500 whitespace-nowrap">Years of Precision</div>
                         </div>
                     </div>
 
@@ -265,7 +282,7 @@
                             <span class="w-8 h-[1px] bg-brand-accent"></span>
                             <span class="text-brand-accent text-[10px] font-bold uppercase tracking-[0.5em]">The Narrative Engine</span>
                         </div>
-                        <h2 class="display-x text-7xl md:text-8xl mb-10">
+                        <h2 class="display-x mb-10">
                             CINEMATIC <br />
                             <span class="text-gradient">SOUL</span>
                         </h2>
@@ -322,7 +339,7 @@
                     <div class="glass-card p-10 relative overflow-hidden backdrop-blur-2xl">
                          <div class="absolute inset-0 bg-gradient-to-br from-brand-accent/5 to-transparent opacity-50"></div>
                          <h3 class="text-xl font-bold mb-8 flex items-center gap-2 relative z-10">
-                            <span class="w-3 h-3 rounded-full bg-brand-accent shadow-[0_0_10px_#00f2ff] animate-pulse"></span> Core Expertises
+                            <span class="w-3 h-3 rounded-full bg-brand-accent shadow-[0_0_10px_#3de500] animate-pulse"></span> Core Expertises
                         </h3>
                         <div class="flex flex-wrap gap-3 relative z-10">
                             <span class="px-5 py-2.5 rounded-full glass-card text-[10px] font-bold text-gray-200 border border-white/10 uppercase tracking-widest hover:border-brand-accent/40 transition-colors cursor-default">Cinematic Grading</span>
@@ -339,9 +356,9 @@
         <!-- Services Section -->
         <section id="services" class="py-40 bg-[rgba(255,255,255,0.01)] backdrop-blur-3xl border-y border-white/5">
             <div class="section-container">
-                <div class="mb-24 text-center md:text-left stagger-in">
-                    <h2 class="display-x text-8xl mb-4">CAPABILITIES</h2>
-                    <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold ml-1">Specialized Post-Production Workflows</p>
+                <div class="mb-24 text-center md:text-left stagger-in px-4">
+                    <h2 class="display-x mb-6">CAPABILITIES</h2>
+                    <p class="text-gray-500 uppercase text-[clamp(0.6rem,1.5vw,0.85rem)] tracking-[0.4em] sm:tracking-[0.6em] font-bold ml-1">Specialized Post-Production Workflows</p>
                 </div>
                 
                 <div class="grid lg:grid-cols-3 gap-1 px-1 bg-white/5 rounded-[40px] overflow-hidden">
@@ -388,9 +405,9 @@
         <section id="portfolio" class="py-40">
             <div class="section-container">
                 <div class="flex flex-col md:flex-row justify-between items-end mb-24 gap-8 stagger-in">
-                    <div>
-                        <h2 class="display-x text-8xl mb-4">SHOWCASE</h2>
-                        <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold ml-1">The Collection of Motion</p>
+                    <div class="px-4">
+                        <h2 class="display-x mb-6">SHOWCASE</h2>
+                        <p class="text-gray-500 uppercase text-[clamp(0.6rem,1.5vw,0.85rem)] tracking-[0.4em] sm:tracking-[0.6em] font-bold ml-1">The Collection of Motion</p>
                     </div>
                 </div>
 
@@ -444,9 +461,9 @@
         <!-- Pricing Section -->
         <section id="pricing" class="py-40 bg-black">
             <div class="section-container">
-                <div class="text-center mb-32 stagger-in">
-                    <h2 class="display-x text-8xl mb-4">INVESTMENT</h2>
-                    <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold">Tiered Performance Packages</p>
+                <div class="text-center mb-32 stagger-in px-4">
+                    <h2 class="display-x mb-6">INVESTMENT</h2>
+                    <p class="text-gray-500 uppercase text-[clamp(0.6rem,1.5vw,0.85rem)] tracking-[0.4em] sm:tracking-[0.6em] font-bold">Tiered Performance Packages</p>
                 </div>
                 
                 <div class="grid lg:grid-cols-3 gap-8">
@@ -1005,7 +1022,7 @@
                 const parts = config.name.split(' ');
                 const nameEls = document.querySelectorAll('.font-display.font-bold.text-2xl.tracking-tighter, #loader-text');
                 nameEls.forEach(el => {
-                    const brandAccentColor = config.accent || '#00f2ff';
+                    const brandAccentColor = config.accent || '#3de500';
                     if (parts.length > 1) {
                         el.innerHTML = `${parts[0]} <span class="text-brand-accent" style="color: ${brandAccentColor}">${parts.slice(1).join(' ')}</span>`;
                     } else {
@@ -1323,9 +1340,9 @@
     </script>
     
     <!-- Sticky Hire Me Bar -->
-    <div id="sticky-hire-bar" class="fixed bottom-0 left-0 w-full z-[100]">
-        <div class="max-w-5xl mx-auto px-4 pb-6">
-            <div class="glass-card p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 border-brand-accent/30 bg-black/80 relative overflow-hidden group shadow-2xl">
+    <div id="sticky-hire-bar" class="fixed bottom-0 left-0 w-full z-[100] animate-in slide-in-from-bottom duration-700">
+        <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 pb-6 pt-2">
+            <div class="glass-card p-4 sm:p-5 lg:p-6 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-8 border-brand-accent/30 bg-black/90 relative overflow-hidden group shadow-2xl rounded-[24px] sm:rounded-[32px]">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-brand-accent/10 border border-brand-accent/20 flex items-center justify-center text-brand-accent shrink-0 cinematic-glow">
                         <i data-lucide="zap" class="w-6 h-6"></i>
