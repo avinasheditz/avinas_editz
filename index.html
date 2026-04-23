@@ -56,7 +56,7 @@
         .display-x {
             font-family: 'Playfair Display', serif;
             font-weight: 900;
-            font-size: clamp(3rem, 15vw, 12rem);
+            font-size: clamp(2.25rem, 12vw, 12rem);
             line-height: 0.85;
             letter-spacing: -0.04em;
             text-transform: uppercase;
@@ -163,12 +163,12 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 z-40 bg-brand-dark/95 backdrop-blur-xl hidden flex flex-col items-center justify-center gap-8">
-        <a href="#home" class="text-3xl font-display font-bold hover:text-brand-accent">Home</a>
-        <a href="#about" class="text-3xl font-display font-bold hover:text-brand-accent">About</a>
-        <a href="#portfolio" class="text-3xl font-display font-bold hover:text-brand-accent">Portfolio</a>
-        <a href="#pricing" class="text-3xl font-display font-bold hover:text-brand-accent">Pricing</a>
+        <a href="#home" onclick="closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">Home</a>
+        <a href="#about" onclick="closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">About</a>
+        <a href="#portfolio" onclick="closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">Portfolio</a>
+        <a href="#pricing" onclick="closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">Pricing</a>
         <button onclick="openLoginModal(); closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">Login</button>
-        <a href="#contact" class="text-3xl font-display font-bold hover:text-brand-accent">Contact</a>
+        <a href="#contact" onclick="closeMobileMenu()" class="text-3xl font-display font-bold hover:text-brand-accent">Contact</a>
         <button class="absolute top-8 right-8 text-white" id="mobile-menu-close">
             <i data-lucide="x" class="w-8 h-8"></i>
         </button>
@@ -215,7 +215,7 @@
                 </div>
 
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 mt-32 pt-12 border-t border-white/5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mt-32 pt-12 border-t border-white/5">
                     <div class="group">
                         <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 border-l-2 border-brand-accent pl-4">Output Level</div>
                         <div class="text-5xl font-display font-bold text-white flex items-baseline">
