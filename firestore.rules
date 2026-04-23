@@ -22,7 +22,7 @@ service cloud.firestore {
 
     function isValidProjectRequest(data) {
       return data.keys().hasAll(['clientName', 'email', 'projectName', 'createdAt'])
-        && data.keys().size() <= 10
+        && data.keys().size() <= 15
         && data.clientName is string && data.clientName.size() <= 100
         && data.email is string && data.email.size() <= 100
         && data.projectName is string && data.projectName.size() <= 200
