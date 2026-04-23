@@ -13,22 +13,29 @@ service cloud.firestore {
 
     function isValidVisitor(data) {
       return data.keys().hasAll(['lat', 'lon', 'timestamp'])
-        && data.keys().size() <= 7 // Limit fields to prevent shadow data
+        && data.keys().size() <= 8
         && data.lat is number
         && data.lon is number
         && data.timestamp is number
-        && data.timestamp > 0
-        && (data.get('city', 'Unknown') is string && data.get('city', 'Unknown').size() <= 100)
-        && (data.get('country', 'Unknown') is string && data.get('country', 'Unknown').size() <= 100)
-        && (data.get('time', '') is string && data.get('time', '').size() <= 20);
+        && data.timestamp > 0;
+    }
+
+    function isValidProjectRequest(data) {
+      return data.keys().hasAll(['clientName', 'email', 'projectName', 'createdAt'])
+        && data.keys().size() <= 10
+        && data.clientName is string && data.clientName.size() <= 100
+        && data.email is string && data.email.size() <= 100
+        && data.projectName is string && data.projectName.size() <= 200
+        && data.createdAt == request.time;
     }
 
     match /liveVisitors/{visitorId} {
-      // Identity: Anyone visiting the site can create a visitor record
       allow create: if isValidId(visitorId) && isValidVisitor(request.resource.data);
-      
-      // Access: For this specific portfolio use-case, the map data is public.
-      // To strictly adhere to security best practices, we restrict reading to a reasonable limit.
+      allow list, get: if true;
+    }
+
+    match /projectRequests/{requestId} {
+      allow create: if isValidProjectRequest(request.resource.data);
       allow list, get: if true;
     }
   }
