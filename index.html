@@ -38,102 +38,83 @@
     <style>
         :root {
             --brand-accent: #00f2ff;
+            --brand-dark: #050505;
         }
         html { scroll-behavior: smooth; }
-        body { background-color: #030303; color: white; -webkit-font-smoothing: antialiased; transition: background-color 0.5s ease, color 0.5s ease; position: relative; overflow-x: hidden; font-weight: 500; }
-        body.light-theme { background-color: #f0f4f7; color: #1a1a1a; }
+        body { 
+            background-color: var(--brand-dark); 
+            color: white; 
+            -webkit-font-smoothing: antialiased; 
+            transition: background-color 0.5s ease; 
+            position: relative; 
+            overflow-x: hidden; 
+            font-weight: 500;
+            line-height: 1.5;
+        }
         
+        /* Editorial Typography */
+        .display-x {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            font-size: clamp(3rem, 15vw, 12rem);
+            line-height: 0.85;
+            letter-spacing: -0.04em;
+            text-transform: uppercase;
+        }
+
         .atmosphere {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
             background: 
-                radial-gradient(circle at 5% 5%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 95% 95%, rgba(219, 39, 119, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 50% 10%, rgba(40, 20, 100, 0.1) 0%, transparent 70%);
-            opacity: 1;
+                radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(219, 39, 119, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(40, 20, 100, 0.05) 0%, transparent 80%);
             pointer-events: none;
         }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        body.light-theme .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            border-color: rgba(0,0,0,0.05);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 32px;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: var(--brand-accent);
-            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 255, 0.3);
+            transform: translateY(-8px) scale(1.02);
         }
 
-        .cinematic-glow { box-shadow: 0 0 20px var(--brand-accent); opacity: 0.15; }
-        .hover-glow:hover { box-shadow: 0 0 30px var(--brand-accent); opacity: 0.3; }
-        .text-gradient { background: linear-gradient(to right, #00f2ff, #2563eb, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .bg-brand-accent { background-color: var(--brand-accent) !important; }
-        .text-brand-accent { color: var(--brand-accent) !important; }
-        .border-brand-accent { border-color: var(--brand-accent) !important; }
-        
-        /* Hide Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        .text-gradient { 
+            background: linear-gradient(135deg, #fff 30%, var(--brand-accent) 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+
+        .btn-glow {
+            box-shadow: 0 0 0 0 rgba(0, 242, 255, 0);
+            transition: all 0.4s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+        }
+
+        /* Section Layout Utilities */
+        .section-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 5vw;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
 
-        .modal-active { overflow: hidden; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        #sticky-hire-bar {
-            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 2s;
-            opacity: 0;
-            transform: translateY(100%);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(100%); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Cinematic Background Elements */
-        .section-bg {
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            opacity: 0.2;
-            filter: blur(2px) contrast(1.1);
-        }
-
         /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        .animate-float { animation: float 5s ease-in-out infinite; }
-
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-        .animate-pulse-slow { animation: pulse-slow 8s linear infinite; }
-
-        /* Global Button Hover Effects */
-        button, .portfolio-item, a[class*="bg-"], .nav-pill {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-        }
-        button:hover, a[class*="bg-"]:hover {
-            transform: translateY(-2px) scale(1.02);
-            filter: brightness(1.1);
-        }
-        button:active, a[class*="bg-"]:active {
-            transform: translateY(0) scale(0.98);
-        }
+        .stagger-in > * { opacity: 0; transform: translateY(30px); }
     </style>
 </head>
 <body class="font-sans">
@@ -195,102 +176,117 @@
 
     <main>
         <!-- Hero Section -->
-        <section id="home" class="relative min-h-[95vh] flex items-center justify-center overflow-hidden pt-20">
-            <div class="absolute inset-0 z-0">
-                <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-brand-dark/80 z-10"></div>
-                <img src="https://picsum.photos/seed/production/1920/1080" alt="Hero BG" class="w-full h-full object-cover opacity-30 grayscale contrast-150 scale-110 pointer-events-none" referrerPolicy="no-referrer">
-                <div class="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-brand-accent/10 rounded-full blur-[150px] animate-pulse-slow"></div>
-                <div class="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-fuchsia-600/10 rounded-full blur-[150px] animate-pulse-slow font-delay-2000"></div>
+        <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+            <div class="absolute inset-0 z-0 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-transparent to-brand-dark z-10"></div>
+                <img src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&q=80&w=1920" alt="Hero BG" class="w-full h-full object-cover opacity-20 scale-105 pointer-events-none" referrerPolicy="no-referrer">
+                <!-- Floating Orbs -->
+                <div class="absolute top-1/4 -left-20 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[120px] animate-pulse"></div>
+                <div class="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-fuchsia-600/5 rounded-full blur-[120px] animate-pulse"></div>
             </div>
 
-            <div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
-                <div class="hero-content">
-                    <span class="inline-block px-4 py-1.5 rounded-full glass-card text-brand-accent text-[10px] font-bold uppercase tracking-[0.3em] mb-8 border border-brand-accent/30 animate-float">
-                        Premium Video Editing & VFX Professional
-                    </span>
+            <div class="section-container relative z-10">
+                <div class="text-center md:text-left stagger-in">
+                    <div class="flex items-center gap-3 mb-8 justify-center md:justify-start">
+                        <span class="w-12 h-[1px] bg-brand-accent"></span>
+                        <span class="text-brand-accent text-[10px] font-bold uppercase tracking-[0.5em] animate-pulse">Premium Video Artistry</span>
+                    </div>
                     
-                    <h1 class="font-display text-5xl md:text-[7.5rem] font-bold tracking-tighter leading-[0.85] mb-10 hero-headline uppercase">
-                        TRANSFORMING <span class="text-gradient">RAW FOOTAGE</span> <br />
-                        INTO <span class="italic font-light opacity-80">STORIES</span>
+                    <h1 class="display-x mb-12">
+                        THE ART <br /> 
+                        OF THE <span class="text-gradient">CUT</span>
                     </h1>
 
-                    <p class="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-10 leading-relaxed">
-                        I specialize in cinematic edits, reels, and high-energy gaming content that 
-                        captures attention and scales your presence across social media.
-                    </p>
-
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <a href="#portfolio" class="w-full sm:w-auto px-8 py-4 bg-brand-accent text-brand-dark rounded-full font-bold flex items-center justify-center gap-2 hover-glow transition-all">
-                            View My Work <i data-lucide="play" class="w-4 h-4 fill-current"></i>
-                        </a>
-                        <a href="#contact" class="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full font-bold flex items-center justify-center gap-2 transition-all text-white">
-                            Start a Project <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                        </a>
+                    <div class="flex flex-col md:flex-row items-center gap-12 max-w-4xl">
+                        <p class="text-gray-400 text-lg md:text-xl leading-relaxed font-light flex-1">
+                            Transforming raw motion into cinematic experiences. Specializing in high-end brand films, 
+                            dynamic reels, and rhythmic gaming narratives that command attention.
+                        </p>
+                        
+                        <div class="flex gap-4">
+                            <a href="#portfolio" class="px-10 py-5 bg-brand-accent text-brand-dark rounded-full font-bold flex items-center gap-2 btn-glow">
+                                VIEW STACK <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+                            </a>
+                            <a href="#contact" class="px-10 py-5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-full font-bold text-white transition-all">
+                                ENLIST <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 pt-12 border-t border-white/5 hero-stats">
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="500">0</div>
-                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Projects Completed</div>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-12 mt-32 pt-12 border-t border-white/5">
+                    <div class="group">
+                        <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 border-l-2 border-brand-accent pl-4">Output Level</div>
+                        <div class="text-5xl font-display font-bold text-white flex items-baseline">
+                            <span class="counter" data-target="500">500</span><span class="text-brand-accent text-xl ml-1">+</span>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="150">0</div>
-                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Happy Clients</div>
+                    <div class="group">
+                        <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 border-l-2 border-brand-accent pl-4">Network Pool</div>
+                        <div class="text-5xl font-display font-bold text-white flex items-baseline">
+                            <span class="counter" data-target="150">150</span><span class="text-brand-accent text-xl ml-1">+</span>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="50" data-suffix="M+">0</div>
-                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Views Generated</div>
+                    <div class="group">
+                        <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 border-l-2 border-brand-accent pl-4">Digital Reach</div>
+                        <div class="text-5xl font-display font-bold text-white flex items-baseline">
+                            <span class="counter" data-target="50">50</span><span class="text-brand-accent text-xl ml-1">M+</span>
+                        </div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-3xl md:text-4xl font-display font-bold text-white mb-1 counter" data-target="4">0</div>
-                        <div class="text-xs uppercase tracking-widest text-gray-500 font-bold">Years Experience</div>
+                    <div class="group">
+                        <div class="text-[10px] uppercase tracking-widest text-gray-500 font-bold mb-3 border-l-2 border-brand-accent pl-4">Temporal Edge</div>
+                        <div class="text-5xl font-display font-bold text-white flex items-baseline">
+                            <span class="counter" data-target="4">4</span><span class="text-brand-accent text-xl ml-1">Y</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- About Section -->
-        <section id="about" class="py-32 relative overflow-hidden bg-black/40">
-            <div class="absolute inset-0 z-0">
-                <img src="https://picsum.photos/seed/setup/1920/1080?blur=5" class="w-full h-full object-cover opacity-[0.03] scale-110 pointer-events-none">
-            </div>
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                <div class="grid md:grid-cols-2 gap-20 items-center">
-                    <div class="relative about-image">
-                        <div class="aspect-square bg-white/5 rounded-[40px] overflow-hidden border border-white/10 group relative">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-brand-accent/20 to-transparent mix-blend-overlay"></div>
-                            <img src="https://picsum.photos/seed/editor/800/800" alt="Avinash Editz" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110">
+        <section id="about" class="py-40 relative">
+            <div class="section-container relative z-10">
+                <div class="grid lg:grid-cols-2 gap-24 items-center">
+                    <div class="relative group">
+                        <div class="aspect-[4/5] bg-white/5 rounded-[40px] overflow-hidden border border-white/10 relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-transparent opacity-60 z-10"></div>
+                            <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&q=80&w=800" alt="Avinash Editz" class="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110">
                         </div>
-                        <div class="absolute -bottom-6 -right-6 glass-card p-6 border-brand-accent/30 text-brand-dark shadow-2xl bg-brand-accent translate-x-2 translate-y-2">
-                            <div class="text-4xl font-display font-bold text-brand-dark">4+</div>
-                            <div class="text-[10px] font-bold uppercase tracking-widest text-brand-dark opacity-70">Years Passion</div>
+                        <!-- Floating Badge -->
+                        <div class="absolute -bottom-10 -right-10 glass-card p-8 border-brand-accent/20 bg-brand-dark/80 backdrop-blur-3xl stagger-in">
+                            <div class="display-x text-6xl text-brand-accent mb-2">04</div>
+                            <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500">Years of Precision</div>
                         </div>
                     </div>
 
-                    <div class="about-text">
-                        <span class="text-brand-accent font-bold uppercase tracking-widest text-sm mb-4 inline-block">Professional Storyteller</span>
-                        <h2 class="text-4xl md:text-5xl font-display font-bold mb-6 tracking-tighter uppercase leading-tight">MASTERING THE ART OF THE <span class="text-gradient">CINEMATIC CUT</span></h2>
-                        <p class="text-gray-300 text-lg mb-8 leading-relaxed font-light">
-                            I am Avinash Editz, a dedicated visual artist based in India with over 4 years of experience in the post-production industry. I specialize in high-impact cinematic edits, rhythmic reels, 
-                            and immersive storytelling for brands and independent creators. My philosophy is simple: <span class="text-white font-bold italic">every frame counts, and every second must tell a story.</span>
+                    <div class="stagger-in">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="w-8 h-[1px] bg-brand-accent"></span>
+                            <span class="text-brand-accent text-[10px] font-bold uppercase tracking-[0.5em]">The Narrative Engine</span>
+                        </div>
+                        <h2 class="display-x text-7xl md:text-8xl mb-10">
+                            CINEMATIC <br />
+                            <span class="text-gradient">SOUL</span>
+                        </h2>
+                        <p class="text-gray-400 text-lg leading-relaxed font-light mb-12">
+                            I am Avinash, a post-production artist dedicated to the science of visual storytelling. 
+                            My work lives at the intersection of technical excellence and emotional impact. 
+                            I don't just edit videos; I engineer retention.
                         </p>
-                        <p class="text-gray-400 text-sm mb-10 leading-relaxed italic border-l-2 border-brand-accent/30 pl-6">
-                            From color grading a moody cinematic short to pacing a high-energy gaming highlight, I bring technical precision and creative flair to every project I touch.
-                        </p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div class="flex gap-4 p-5 rounded-3xl glass-card">
-                                <div class="w-10 h-10 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <i data-lucide="zap" class="text-brand-accent w-5 h-5"></i>
-                                </div>
-                                <div><h4 class="font-bold text-white mb-1 uppercase text-xs tracking-widest">Rapid Flow</h4><p class="text-[10px] text-gray-500 uppercase tracking-tighter">24h Express Delivery</p></div>
+                        
+                        <div class="grid grid-cols-2 gap-8">
+                            <div class="border-t border-white/10 pt-6">
+                                <h4 class="font-bold text-white mb-2 uppercase text-xs tracking-widest flex items-center gap-2">
+                                    <i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> RAPID DEPLOY
+                                </h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">24-48h Signature Turnaround</p>
                             </div>
-                            <div class="flex gap-4 p-5 rounded-3xl glass-card">
-                                <div class="w-10 h-10 bg-brand-accent/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <i data-lucide="award" class="text-brand-accent w-5 h-5"></i>
-                                </div>
-                                <div><h4 class="font-bold text-white mb-1 uppercase text-xs tracking-widest">Premium Grade</h4><p class="text-[10px] text-gray-500 uppercase tracking-tighter">Cinematic Standard</p></div>
+                            <div class="border-t border-white/10 pt-6">
+                                <h4 class="font-bold text-white mb-2 uppercase text-xs tracking-widest flex items-center gap-2">
+                                    <i data-lucide="award" class="w-3 h-3 text-brand-accent"></i> OPTICAL GRADE
+                                </h4>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Cinema Standard Color Logic</p>
                             </div>
                         </div>
                     </div>
@@ -341,70 +337,64 @@
         </section>
 
         <!-- Services Section -->
-        <section id="services" class="py-32 bg-[#050505]">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-20">
-                    <span class="text-brand-accent font-bold uppercase tracking-[0.3em] text-xs mb-4 inline-block">Specializations</span>
-                    <h2 class="text-4xl md:text-6xl font-display font-bold tracking-tighter uppercase">WHAT I <span class="text-gradient">OFFER</span></h2>
+        <section id="services" class="py-40 bg-[rgba(255,255,255,0.01)] backdrop-blur-3xl border-y border-white/5">
+            <div class="section-container">
+                <div class="mb-24 text-center md:text-left stagger-in">
+                    <h2 class="display-x text-8xl mb-4">CAPABILITIES</h2>
+                    <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold ml-1">Specialized Post-Production Workflows</p>
                 </div>
                 
-                <div class="grid md:grid-cols-3 gap-10">
-                    <div class="p-10 glass-card border border-white/5 group">
-                        <div class="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                <div class="grid lg:grid-cols-3 gap-1 px-1 bg-white/5 rounded-[40px] overflow-hidden">
+                    <div class="p-16 bg-brand-dark hover:bg-white/[0.02] transition-colors group">
+                        <div class="w-16 h-16 mb-12 flex items-center justify-center border border-white/10 rounded-2xl group-hover:border-brand-accent transition-colors">
                             <i data-lucide="clapperboard" class="text-brand-accent w-8 h-8"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 uppercase tracking-tight">Cinematic Edits</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed mb-6">Mood-driven corrections, advanced color grading, and narrative-focused pacing for shorts and documentaries.</p>
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                            <i data-lucide="check" class="w-3 h-3"></i> 4K Quality
-                        </div>
+                        <h3 class="text-3xl font-display font-bold mb-6 uppercase tracking-tighter">Brand Films</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-8">Cinematic narratives designed for corporate identity, luxury brands, and institutional storytelling.</p>
+                        <ul class="space-y-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> 8K Mastering</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> Industry Grade Grading</li>
+                        </ul>
                     </div>
 
-                    <div class="p-10 glass-card border border-white/5 group bg-white/[0.02]">
-                        <div class="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                    <div class="p-16 bg-brand-dark hover:bg-white/[0.02] transition-colors group">
+                        <div class="w-16 h-16 mb-12 flex items-center justify-center border border-white/10 rounded-2xl group-hover:border-brand-accent transition-colors">
                             <i data-lucide="smartphone" class="text-brand-accent w-8 h-8"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 uppercase tracking-tight">Social Reels</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed mb-6">Vertical edits designed to capture attention in the first 3 seconds, featuring dynamic captions and trending music.</p>
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                            <i data-lucide="check" class="w-3 h-3"></i> High Retention
-                        </div>
+                        <h3 class="text-3xl font-display font-bold mb-6 uppercase tracking-tighter">Social Flux</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-8">High-retention vertical edits for Reels, TikTok, and Shorts. Engineered for the 3-second hook.</p>
+                        <ul class="space-y-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> Viral Pacing</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> AI Subtitles</li>
+                        </ul>
                     </div>
 
-                    <div class="p-10 glass-card border border-white/5 group">
-                        <div class="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+                    <div class="p-16 bg-brand-dark hover:bg-white/[0.02] transition-colors group">
+                        <div class="w-16 h-16 mb-12 flex items-center justify-center border border-white/10 rounded-2xl group-hover:border-brand-accent transition-colors">
                             <i data-lucide="gamepad-2" class="text-brand-accent w-8 h-8"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-4 uppercase tracking-tight">Gaming Montages</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed mb-6">High-energy sync edits for esports and streamers, focusing on kill-streaks, timing, and heavy VFX impacts.</p>
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-                            <i data-lucide="check" class="w-3 h-3"></i> Sync Magic
-                        </div>
+                        <h3 class="text-3xl font-display font-bold mb-6 uppercase tracking-tighter">Gaming Ops</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed mb-8">Adrenaline-fueled montages and highlights for esports athletes and high-performance streamers.</p>
+                        <ul class="space-y-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> Frame-Sync Tech</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-brand-accent rounded-full"></span> Heavy VFX Stacking</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Portfolio Section -->
-        <section id="portfolio" class="py-32">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+        <section id="portfolio" class="py-40">
+            <div class="section-container">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-24 gap-8 stagger-in">
                     <div>
-                        <span class="text-brand-accent font-bold uppercase tracking-widest text-sm mb-4 inline-block">Selected Works</span>
-                        <h2 class="text-4xl md:text-5xl font-display font-bold tracking-tighter">PORTFOLIO <span class="text-gradient">SHOWCASE</span></h2>
-                    </div>
-                    <div class="flex flex-wrap gap-2" id="portfolio-filters">
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-brand-accent text-brand-dark filter-btn active" data-filter="all">All</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="cinematic">Cinematic</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="reels">Reels</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="gaming">Gaming</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="branding">Branding</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="events">Event Coverage</button>
-                        <button class="px-4 py-2 rounded-full text-xs font-bold bg-white/5 text-gray-500 filter-btn" data-filter="docu">Documentary</button>
+                        <h2 class="display-x text-8xl mb-4">SHOWCASE</h2>
+                        <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold ml-1">The Collection of Motion</p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="portfolio-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12" id="portfolio-grid">
                     <!-- Dynamic Video Items injected via JS -->
                 </div>
             </div>
@@ -452,54 +442,49 @@
         </section>
 
         <!-- Pricing Section -->
-        <section id="pricing" class="py-32 bg-[#050505]">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl md:text-5xl font-display font-bold tracking-tighter mb-4">FAIR <span class="text-gradient">PRICING</span></h2>
-                    <p class="text-gray-500">Tiered packages for every creator</p>
+        <section id="pricing" class="py-40 bg-black">
+            <div class="section-container">
+                <div class="text-center mb-32 stagger-in">
+                    <h2 class="display-x text-8xl mb-4">INVESTMENT</h2>
+                    <p class="text-gray-500 uppercase text-xs tracking-[0.6em] font-bold">Tiered Performance Packages</p>
                 </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Cards -->
-                <div class="glass-card p-10 hover:border-yellow-400/50 transition-all group relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-yellow-400/5 rounded-full blur-2xl"></div>
-                    <h3 class="text-xl font-bold mb-2 text-yellow-400">BASIC</h3>
-                    <div id="display-price-basic" class="text-4xl font-display font-bold mb-6">$19</div>
-                    <ul class="space-y-4 mb-8 text-sm text-white/80">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> Narrative Storytelling</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> Basic Color Correction</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> Royalty Free Music</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> 1080p Export</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-yellow-400"></i> 1 Revision</li>
-                    </ul>
-                    <button class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-yellow-400 hover:text-brand-dark transition-all open-contact">Get Started</button>
+                
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Cards -->
+                    <div class="p-12 glass-card group">
+                        <h3 class="text-xs font-bold mb-8 uppercase tracking-[0.4em] text-gray-500">Tier I / Basic</h3>
+                        <div id="display-price-basic" class="display-x text-7xl mb-12">$19</div>
+                        <ul class="space-y-6 mb-16 text-xs font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> 1080p Master</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> Core Grading</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> 1 Revision</li>
+                        </ul>
+                        <button class="w-full py-6 rounded-2xl bg-white/5 border border-white/10 font-bold uppercase tracking-widest text-[10px] hover:bg-brand-accent hover:text-brand-dark transition-all" onclick="openContactModal('BASIC', 19)">Initiate</button>
+                    </div>
+
+                    <div class="p-12 glass-card border-brand-accent/40 bg-white/[0.01] relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 bg-brand-accent text-brand-dark px-6 py-2 text-[10px] font-bold uppercase tracking-widest">Recommended</div>
+                        <h3 class="text-xs font-bold mb-8 uppercase tracking-[0.4em] text-brand-accent">Tier II / Standard</h3>
+                        <div id="display-price-standard" class="display-x text-7xl mb-12">$49</div>
+                        <ul class="space-y-6 mb-16 text-xs font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> 4K Cinematic HDR</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> Advanced SFX</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> Signature Pacing</li>
+                        </ul>
+                        <button class="w-full py-6 rounded-2xl bg-brand-accent text-brand-dark font-bold uppercase tracking-widest text-[10px] btn-glow" onclick="openContactModal('STANDARD', 49)">Deploy</button>
+                    </div>
+
+                    <div class="p-12 glass-card group">
+                        <h3 class="text-xs font-bold mb-8 uppercase tracking-[0.4em] text-gray-500">Tier III / Premium</h3>
+                        <div id="display-price-premium" class="display-x text-7xl mb-12">$109</div>
+                        <ul class="space-y-6 mb-16 text-xs font-bold uppercase tracking-widest text-gray-400">
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> Full 8K Production</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> High-End VFX</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap" class="w-3 h-3 text-brand-accent"></i> Creative Direction</li>
+                        </ul>
+                        <button class="w-full py-6 rounded-2xl bg-white/5 border border-white/10 font-bold uppercase tracking-widest text-[10px] hover:bg-brand-accent hover:text-brand-dark transition-all" onclick="openContactModal('PREMIUM', 109)">Elevate</button>
+                    </div>
                 </div>
-                <div class="glass-card p-10 border-red-500 border-2 cinematic-glow relative overflow-hidden bg-red-500/10 scale-105 z-10 shadow-[0_0_30px_rgba(239,68,68,0.2)]">
-                    <div class="absolute top-0 right-0 bg-red-500 text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-bl-xl">Popular</div>
-                    <h3 class="text-xl font-bold mb-2 text-red-500">STANDARD</h3>
-                    <div id="display-price-standard" class="text-4xl font-display font-bold mb-6">$49</div>
-                    <ul class="space-y-4 mb-8 text-sm text-white">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> Advanced Motion FX</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> Custom Sound Design</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> Dynamic Transitions</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> 4K High Dynamic Range</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]"></i> 48h Signature Delivery</li>
-                    </ul>
-                    <button class="w-full py-4 rounded-xl bg-red-500 text-white font-bold hover:bg-white hover:text-red-500 transition-all open-contact">Most Popular</button>
-                </div>
-                <div class="glass-card p-10 hover:border-purple-500/50 transition-all group relative overflow-hidden">
-                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/5 rounded-full blur-2xl"></div>
-                    <h3 class="text-xl font-bold mb-2 text-purple-500">PREMIUM</h3>
-                    <div id="display-price-premium" class="text-4xl font-display font-bold mb-6">$109</div>
-                    <ul class="space-y-4 mb-8 text-sm text-white/80">
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Full Cinematic Master</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Complex 3D Compositing</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Custom Soundtrack Mix</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Professional Color Script</li>
-                        <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-purple-500"></i> Dedicated Creative Direction</li>
-                    </ul>
-                    <button class="w-full py-4 rounded-xl bg-white/5 border border-white/10 font-bold hover:bg-purple-500 hover:text-white transition-all open-contact">Go Elite</button>
-                </div>
-            </div>
             </div>
         </section>
 
@@ -617,6 +602,7 @@
 
             <form id="inquiry-form">
                 <div class="tab-content active" data-tab-id="0">
+                    <input type="hidden" id="inquiry-chosen-plan" value="Custom">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Project Name</label>
                     <input type="text" id="inquiry-project-name" required placeholder="e.g. My Awesome Montage" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 focus:border-brand-accent outline-none mb-4">
                     
@@ -642,6 +628,9 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Your Name</label>
                     <input type="text" id="inquiry-client-name" required placeholder="How should I call you?" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 outline-none">
                     
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Phone Number (WhatsApp)</label>
+                    <input type="tel" id="inquiry-phone" required placeholder="e.g. +91 93104 91221" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 mb-4 outline-none">
+
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Email Address</label>
                     <input type="email" id="inquiry-email" required placeholder="Your email" class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 outline-none">
                 </div>
@@ -751,18 +740,35 @@
 
         // Contact Modal Logic
         let contactTab = 0;
-        function openContactModal() {
+        function openContactModal(planName = 'Custom', priceVal = '') {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             document.body.classList.add('modal-active');
+            
+            // Pre-fill plan details if provided (Check if planName is a string, not an event)
+            if (typeof planName === 'string' && planName !== '[object MouseEvent]' && planName !== '') {
+                document.getElementById('inquiry-chosen-plan').value = planName;
+                document.getElementById('inquiry-project-name').value = `${planName} Order`;
+            }
+            if (typeof priceVal === 'number' || (typeof priceVal === 'string' && priceVal !== '')) {
+                document.getElementById('inquiry-price').value = priceVal;
+            }
+
+            // Always reset to first tab when opening
+            contactTab = 0;
             updateContactTabs();
         }
         function closeContactModal() {
             modal.classList.add('hidden');
             modal.classList.remove('flex');
             document.body.classList.remove('modal-active');
+            contactTab = 0;
+            updateContactTabs();
         }
-        document.querySelectorAll('.open-contact').forEach(btn => btn.addEventListener('click', openContactModal));
+        document.querySelectorAll('.open-contact').forEach(btn => btn.addEventListener('click', (e) => {
+            // Prevent passing event to openContactModal
+            openContactModal();
+        }));
         modalOverlay.addEventListener('click', closeContactModal);
         modalClose.addEventListener('click', closeContactModal);
 
@@ -792,66 +798,112 @@
         contactBtnNext.addEventListener('click', () => { if (contactTab < 2) { contactTab++; updateContactTabs(); } });
         contactBtnPrev.addEventListener('click', () => { if (contactTab > 0) { contactTab--; updateContactTabs(); } });
 
+        // Pre-import for faster submission to avoid popup blocker issues
+        const firebaseFirestorePromise = import("https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js");
+
         // Form Submit -> WhatsApp
         inquiryForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('tab-submit');
-            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Submitting...';
+            const originalBtnContent = btn.innerHTML;
+            
+            // 1. Immediate UI Feedback
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin inline mr-2"></i> PROCESSING...';
             if (typeof lucide !== 'undefined') lucide.createIcons();
 
-            const projectName = document.getElementById('inquiry-project-name').value;
-            const description = document.getElementById('inquiry-description').value;
-            const videoUrl = document.getElementById('inquiry-video-url').value;
-            const price = document.getElementById('inquiry-price').value;
-            const type = document.getElementById('inquiry-type').value;
-            const clientName = document.getElementById('inquiry-client-name').value;
-            const email = document.getElementById('inquiry-email').value;
-
-            const projectData = {
-                projectName,
-                description,
-                videoUrl,
-                price,
-                type,
-                clientName,
-                email,
-                status: 'pending',
-                createdAt: (typeof serverTimestamp === 'function') ? serverTimestamp() : Date.now()
-            };
-
             try {
-                if (window.siteDb) {
-                    const { addDoc, collection } = await import("https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js");
-                    await addDoc(collection(window.siteDb, 'projectRequests'), projectData);
+                // 2. Data Collection (Consolidated)
+                const formData = {
+                    projectName: document.getElementById('inquiry-project-name').value.trim(),
+                    description: document.getElementById('inquiry-description').value.trim(),
+                    videoUrl: document.getElementById('inquiry-video-url').value.trim(),
+                    price: document.getElementById('inquiry-price').value.trim(),
+                    type: document.getElementById('inquiry-type').value,
+                    clientName: document.getElementById('inquiry-client-name').value.trim(),
+                    email: document.getElementById('inquiry-email').value.trim(),
+                    phone: document.getElementById('inquiry-phone').value.trim(),
+                    plan: document.getElementById('inquiry-chosen-plan').value
+                };
+
+                // Form validation check
+                if (!formData.projectName || !formData.clientName || !formData.phone) {
+                    throw new Error("Required fields are missing. Protocol aborted.");
                 }
-                
+
+                const leadId = 'LD-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                const location = window.currentVisitorLocation || { city: 'Local', country: 'Global' };
+
+                const projectData = {
+                    ...formData,
+                    leadId,
+                    location,
+                    status: 'pending',
+                    createdAt: Date.now()
+                };
+
+                // 3. Automation Report Trigger (WhatsApp)
                 const waMessage = encodeURIComponent(
-                    `🚀 *NEW PROJECT BRIEF* 🚀\n\n` +
-                    `*Project:* ${projectName}\n` +
-                    `*Video:* ${videoUrl || 'No link provided'}\n\n` +
-                    `*Budget:* $${price}\n` +
-                    `*Client:* ${clientName}\n` +
-                    `*Category:* ${type}\n\n` +
-                    `*Details:* ${description}`
+                    `🤖 *AUTOMATED LEAD REPORT* 🤖\n` +
+                    `----------------------------\n` +
+                    `🆔 *Lead ID:* ${leadId}\n` +
+                    `📅 *Date:* ${new Date().toLocaleDateString()}\n\n` +
+                    `💎 *Plan:* ${formData.plan}\n` +
+                    `🎬 *Project:* ${formData.projectName}\n` +
+                    `🔗 *Ref:* ${formData.videoUrl || 'N/A'}\n\n` +
+                    `💰 *Budget:* $${formData.price}\n\n` +
+                    `👤 *Client:* \n` +
+                    `- ${formData.clientName}\n` +
+                    `- ${formData.phone}\n` +
+                    `- ${formData.email}\n` +
+                    `- ${location.city}, ${location.country}\n\n` +
+                    `📝 *Brief:* ${formData.description}\n` +
+                    `----------------------------\n` +
+                    `⚡ _Avinash Editz Automation_`
                 );
 
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`, '_blank');
+                // 4. Async Firestore Sync (Parallel)
+                const syncTask = (async () => {
+                    try {
+                        if (window.siteDb) {
+                            const { addDoc, collection, serverTimestamp } = await firebaseFirestorePromise;
+                            projectData.createdAt = serverTimestamp();
+                            await addDoc(collection(window.siteDb, 'projectRequests'), projectData);
+                        }
+                    } catch (syncErr) {
+                        console.warn("Database sync delayed but report proceeding:", syncErr);
+                    }
+                })();
+
+                // 5. Hardened Popup Opening (Bypass Blockers)
+                const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${waMessage}`;
                 
-                // Close and Reset first to provide immediate visual feedback
+                // We open the window BEFORE waiting for the database sync to ensure it's tied to the user click
+                const waWindow = window.open(waUrl, '_blank');
+                
+                if (!waWindow) {
+                    // Fallback if blocker still triggers
+                    window.location.href = waUrl;
+                }
+
+                // Wait for background tasks to finish
+                await syncTask;
+
+                // 6. Success Protocol
                 closeContactModal();
                 inquiryForm.reset();
-                contactTab = 0;
-                updateContactTabs();
-                btn.innerHTML = 'Send Inquiry';
+                btn.disabled = false;
+                btn.innerHTML = originalBtnContent;
                 
-                // Show confirmation after the UI has updated
                 setTimeout(() => {
-                    alert("Project request sent! I will review it shortly.");
+                    alert("PROTOCOL SUCCESS: Lead report generated and satellite sync complete.");
                 }, 100);
+
             } catch (err) {
-                console.error("Submission failed:", err);
-                alert("Submission failed. Please try again.");
-                btn.innerHTML = 'Send Inquiry';
+                console.error("Critical Failure:", err);
+                alert(`Error: ${err.message || 'System error detected. Protocol reset.'}`);
+                btn.disabled = false;
+                btn.innerHTML = originalBtnContent;
             }
         });
 
@@ -1148,17 +1200,34 @@
                 });
             });
 
-            // Scroll Triggers for Sections
+            // Section Entrance Animations
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Refined Stagger Entrance
+            gsap.utils.toArray('.stagger-in').forEach(container => {
+                gsap.to(container.children, {
+                    scrollTrigger: {
+                        trigger: container,
+                        start: "top 85%",
+                    },
+                    y: 0,
+                    opacity: 1,
+                    stagger: 0.15,
+                    duration: 1.2,
+                    ease: "power4.out"
+                });
+            });
+
             gsap.utils.toArray('section').forEach(section => {
-                gsap.from(section.querySelectorAll('.max-w-7xl > *'), {
+                if (section.id === 'home') return;
+                gsap.from(section, {
                     scrollTrigger: {
                         trigger: section,
-                        start: "top 80%",
+                        start: "top 90%",
                     },
-                    y: 40,
                     opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.1
+                    duration: 2,
+                    ease: "power2.out"
                 });
             });
 
@@ -1214,6 +1283,12 @@
                 } catch (netErr) {
                     console.log('Location API blocked, using fallback.');
                 }
+                
+                // Store globally for automation brief
+                window.currentVisitorLocation = { 
+                    city: visitor.city, 
+                    country: visitor.country 
+                };
                 
                 await addDoc(collection(db, 'liveVisitors'), visitor);
             } catch (e) {
