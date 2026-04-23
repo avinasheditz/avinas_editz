@@ -113,6 +113,15 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--brand-accent); }
 
+        /* Tab Logic */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+        .modal-active { overflow: hidden; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Animations */
         .stagger-in > * { opacity: 0; transform: translateY(30px); }
     </style>
@@ -514,11 +523,11 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="glass-card p-10 hover:border-brand-accent/30 transition-all">
                     <div class="flex gap-1 mb-6">
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
                     </div>
                     <p class="text-gray-300 text-lg italic mb-8 leading-relaxed">"Absolute cinematic genius. The way Avinash handled the color transitions was next level. Highly recommended!"</p>
                     <div class="flex items-center gap-4">
@@ -548,11 +557,11 @@
                 </div>
                 <div class="glass-card p-10 hover:border-brand-accent/30 transition-all">
                     <div class="flex gap-1 mb-6">
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#00f2ff]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
+                        <i data-lucide="star" class="w-4 h-4 fill-brand-accent text-brand-accent shadow-[0_0_5px_#3de500]"></i>
                     </div>
                     <p class="text-gray-300 text-lg italic mb-8 leading-relaxed">"Avinash understood the brand's voice perfectly from day one. Our engagement skyrocketed after his reels went live."</p>
                     <div class="flex items-center gap-4">
@@ -605,7 +614,7 @@
     <!-- Contact Modal -->
     <div id="contact-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-6">
         <div class="absolute inset-0 bg-black/90 backdrop-blur-sm" id="contact-modal-overlay"></div>
-        <div class="relative w-full max-w-xl bg-brand-dark border border-white/10 rounded-[32px] overflow-hidden p-8 animate-in fade-in zoom-in duration-300">
+        <div class="relative w-full max-w-xl bg-brand-dark border border-white/10 rounded-[32px] p-8 animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-display font-bold">Project Brief</h3>
                 <button id="contact-modal-close" class="text-gray-500 hover:text-white"><i data-lucide="x"></i></button>
@@ -655,7 +664,7 @@
                 <div class="flex gap-4 mt-8">
                     <button type="button" id="tab-prev" class="flex-1 py-4 bg-white/5 rounded-2xl font-bold hidden">Back</button>
                     <button type="button" id="tab-next" class="flex-1 py-4 bg-brand-accent text-brand-dark rounded-2xl font-bold">Next</button>
-                    <button type="submit" id="tab-submit" class="flex-1 py-4 bg-brand-accent text-brand-dark rounded-2xl font-bold hidden">Send Inquiry</button>
+                    <button type="submit" id="tab-submit" class="flex-1 py-4 bg-brand-accent text-brand-dark rounded-2xl font-bold btn-glow hidden">Send Inquiry</button>
                 </div>
             </form>
         </div>
@@ -812,7 +821,21 @@
             contactBtnSubmit.classList.toggle('hidden', contactTab < 2);
         };
 
-        contactBtnNext.addEventListener('click', () => { if (contactTab < 2) { contactTab++; updateContactTabs(); } });
+        contactBtnNext.addEventListener('click', () => { 
+            const currentTabEl = contactTabContents[contactTab];
+            if (currentTabEl) {
+                const fields = currentTabEl.querySelectorAll('input[required], textarea[required], select[required]');
+                let valid = true;
+                fields.forEach(f => {
+                    if (!f.checkValidity()) {
+                        f.reportValidity();
+                        valid = false;
+                    }
+                });
+                if (!valid) return;
+            }
+            if (contactTab < 2) { contactTab++; updateContactTabs(); } 
+        });
         contactBtnPrev.addEventListener('click', () => { if (contactTab > 0) { contactTab--; updateContactTabs(); } });
 
         // Pre-import for faster submission to avoid popup blocker issues
