@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "Visitor": {
@@ -11,25 +10,31 @@
         "lat": { "type": "number" },
         "lon": { "type": "number" },
         "time": { "type": "string" },
-        "timestamp": { "type": "number" }
+        "timestamp": { "type": "number" },
+        "createdAt": { "type": "object" }
       },
-      "required": ["lat", "lon", "timestamp"]
+      "required": ["lat", "lon", "timestamp", "createdAt"]
     },
     "ProjectRequest": {
       "title": "Project Request",
       "description": "A formal inquiry from a potential client.",
       "type": "object",
       "properties": {
+        "leadId": { "type": "string" },
         "clientName": { "type": "string" },
         "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
         "projectName": { "type": "string" },
+        "plan": { "type": "string" },
         "type": { "type": "string" },
         "price": { "type": "string" },
         "description": { "type": "string" },
         "videoUrl": { "type": "string" },
+        "location": { "type": "object" },
+        "status": { "type": "string" },
         "createdAt": { "type": "object" }
       },
-      "required": ["clientName", "email", "projectName", "createdAt"]
+      "required": ["leadId", "clientName", "email", "projectName", "createdAt"]
     }
   },
   "firestore": {
@@ -43,3 +48,4 @@
     }
   }
 }
+
