@@ -1663,6 +1663,15 @@
         // Listen for new project requests
         const pq = query(collection(db, "projectRequests"), orderBy("createdAt", "desc"), limit(20));
         
+        // Real-time counter for project stats
+        onSnapshot(collection(db, "projectRequests"), (snapshot) => {
+            const count = snapshot.size;
+            const statsEl = document.querySelector('#view-dashboard .text-4xl.font-bold');
+            if (statsEl) {
+                statsEl.innerText = count;
+            }
+        });
+
         const updateTopBarNotifications = (cloudRequests) => {
             const badge = document.getElementById('notif-badge');
             const notifList = document.getElementById('notif-list');
