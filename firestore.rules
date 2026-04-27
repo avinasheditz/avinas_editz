@@ -1,42 +1,59 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Catch-all deny
+    // 0. Global Safety Net
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Helper functions
-    function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    // Phase 3: Primitive Definition
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { 
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)); 
     }
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
 
     function isValidVisitor(data) {
-      return data.keys().hasAll(['lat', 'lon', 'timestamp'])
-        && data.keys().size() <= 8
+      return data.keys().hasAll(['lat', 'lon', 'timestamp', 'createdAt'])
+        && data.keys().size() <= 10
         && data.lat is number
         && data.lon is number
         && data.timestamp is number
-        && data.timestamp > 0;
+        && data.createdAt == request.time
+        && data.city is string && data.city.size() <= 100
+        && data.country is string && data.country.size() <= 100;
     }
 
     function isValidProjectRequest(data) {
-      return data.keys().hasAll(['clientName', 'email', 'projectName', 'createdAt'])
+      return data.keys().hasAll(['leadId', 'clientName', 'email', 'projectName', 'createdAt'])
         && data.keys().size() <= 15
+        && data.leadId is string && data.leadId.size() <= 50
         && data.clientName is string && data.clientName.size() <= 100
         && data.email is string && data.email.size() <= 100
         && data.projectName is string && data.projectName.size() <= 200
+        && data.status is string && data.status.size() <= 20
         && data.createdAt == request.time;
     }
 
+    // 1. Visitor Tracking (Public Create, Admin Read)
     match /liveVisitors/{visitorId} {
-      allow create: if isValidId(visitorId) && isValidVisitor(request.resource.data);
-      allow list, get: if true;
+      allow create: if isValidVisitor(incoming());
+      allow read: if isAdmin();
     }
 
+    // 2. Project Requests (Public Create, Admin Read)
     match /projectRequests/{requestId} {
-      allow create: if isValidProjectRequest(request.resource.data);
-      allow list, get: if true;
+      allow create: if isValidProjectRequest(incoming());
+      allow read: if isAdmin();
+    }
+
+    // 3. Admin Access Control (Self-Read, No Write)
+    match /admins/{adminId} {
+      allow read: if isSignedIn() && request.auth.uid == adminId;
     }
   }
 }
